@@ -1,0 +1,34 @@
+[[source]]
+url = "https://mirrors.aliyun.com/pypi/simple/"
+verify_ssl = true
+name = "aliyun"
+
+[dev-packages]
+
+[packages]
+requests = "*"
+fastapi = "*"
+python-scrapyd-api = "*"
+uvicorn = "*"
+pydantic = "*"
+email-validator = "*"
+pymysql = "*"
+tortoise-orm = "*"
+django = "*"
+django-cors-headers = "*"
+environs = "*"
+redis = "*"
+fabric3 = "*"
+python-gitlab = "*"
+python-dateutil = "*"
+djangorestframework = "*"
+elasticsearch = "*"
+pytz = "*"
+django-crontab = "*"
+django-apscheduler = "*"
+pika = "*"
+djangorestframework-camel-case = "*"
+tldextract = "*"
+
+[requires]
+python_version = "3.7"
