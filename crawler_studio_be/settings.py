@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
-
+from environs import Env
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -83,16 +83,19 @@ WSGI_APPLICATION = 'crawler_studio_be.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+env = Env()
+env.read_env(f'{os.path.dirname(os.path.dirname(__file__))}/.env.{os.getenv("ENV", "dev")}')
+
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'AUTOMIC_REQUESTS': True,
-        'NAME': 'crawler_studio',
-        'USER': 'root',
-        'PASSWORD': '3P%Cte74Vs',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
+        'NAME': env.str('MYSQL_DB'),
+        'USER': env.str('MYSQL_USER'),
+        'PASSWORD': env.str('MYSQL_PW'),
+        'HOST': env.str('MYSQL_HOST'),
+        'PORT': env.int('MYSQL_PORT'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
