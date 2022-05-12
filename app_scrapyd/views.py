@@ -162,7 +162,6 @@ def list_spiders(request):
         scrapyd_container[addr] = ScrapydAPI(target=addr)
 
     projects = scrapyd_container[addr].list_projects()
-    print(projects)
     info = []
     for project in projects:
         if project not in ('.DS_Store', 'default'):
@@ -174,8 +173,8 @@ def list_spiders(request):
                         'spider': spider
                     }
                     info.append(item)
-            except:
-                pass
+            except Exception as e:
+                logger.error(f'异常: {e}', exc_info=True)
 
     return JsonResponse(info, safe=False)
 
