@@ -9,9 +9,12 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from crawler_studio_be.settings import get_redis_from_name
 from urllib.parse import urlparse
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from app_schedule.models import MonitorRules
+from .ser import SpiderStatsSer
+from .models import SpiderStats
 
 
 redis_cli = get_redis_from_name('pac2')
@@ -125,6 +128,29 @@ class SpiderSettingCRUD(APIView):
         return Response('保存成功')
 
     def put(self, request, **kwargs):
+        pass
+
+
+class SpiderStatsCRUD(APIView):
+
+    def get(self, request, **kwargs):
+        return Response('ok')
+
+    def post(self, request, **kwargs):
+        job_id = request.data['job_id']
+        existed = SpiderStats.objects.filter(job_id=job_id).first()
+        stats = SpiderStatsSer(instance=existed, data=request.data)
+        if stats.is_valid():
+            stats.save()
+            if existed:
+                return Response(f'更新成功 {job_id}', status=status.HTTP_200_OK)
+            else:
+                return Response(f'添加成功 {job_id}', status=status.HTTP_200_OK)
+        else:
+            logger.error(stats.errors)
+            return Response(stats.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, **kwargs):
         pass
 
 

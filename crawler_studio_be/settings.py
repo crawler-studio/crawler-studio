@@ -99,18 +99,6 @@ DATABASES = {
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
-    },
-    'env': {
-        'ENGINE': 'django.db.backends.mysql',
-        'AUTOMIC_REQUESTS': True,
-        'NAME': 'env',
-        'USER': 'root',
-        'PASSWORD': '947Bmyse7NHm',
-        'HOST': 'rm-uf69y950pk027k4q1.mysql.rds.aliyuncs.com',
-        'PORT': 3306,
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        }
     }
 }
 

@@ -16,5 +16,6 @@ urlpatterns = [
     url('stats/', views.stats),
     url('check_cancel/', views.check_cancel),
     url('runningTask/', views.RunningTaskCRUD.as_view()),
-    url('spiderSetting/', views.SpiderSettingCRUD.as_view())
+    url('spiderSetting/', views.SpiderSettingCRUD.as_view()),
+    url('spiderStats/', views.SpiderStatsCRUD.as_view())
 ]
