@@ -120,7 +120,7 @@ class MonitorRulesCRUD(APIView):
         rule = MonitorRulesSerializer(data=request.data)
         if rule.is_valid():
             if MonitorRules.objects.filter(spider_job_id=rule.validated_data['spider_job_id']):
-                return Response('爬虫已有定时规则，请勿重复添加')
+                return Response('爬虫已有收件规则，请勿重复添加')
             else:
                 rule.save()
                 return Response('添加成功', status=status.HTTP_200_OK)

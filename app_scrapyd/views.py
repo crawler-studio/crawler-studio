@@ -42,17 +42,16 @@ class RunningTaskCRUD(APIView):
         for p in ins.list_projects():
             j = ins.list_jobs(p)
             for running in j['running']:
+                stats = SpiderStats.objects.filter(job_id=running['id']).first()
                 item = dict()
                 item['project'] = p
                 item['job_id'] = running['id']
                 item['spider'] = running['spider']
                 item['pid'] = running['pid']
                 item['start_time'] = running['start_time'].split('.')[0]
-                stats_key = f'scrapy_box:stats:{running["id"]}'
-                stats_data = redis_cli.hgetall(stats_key)
-                item['schedule_type'] = stats_data.get('loop_type', '')
-                item['trigger'] = stats_data.get('loop_trigger', '')
-                item['last_run'] = stats_data.get('loop_last_run', '')
+                item['schedule_type'] = stats.run_type
+                item['trigger'] = stats.trigger
+                item['last_run'] = stats.last_run
                 running_info.append(item)
         running_info.sort(key=lambda _: _['start_time'], reverse=True)
         return Response(running_info)
@@ -61,23 +60,23 @@ class RunningTaskCRUD(APIView):
         data = request.data
         ins = ScrapydAPI(target=data['addr'])
         job_id = ins.schedule(data['project'], data['spider'])
-        monitor = redis_cli.hgetall(self.key)
-        recipients = [] if not monitor['recipients'] else monitor['recipients'].split(',')
-        monitor_log_alive = True if int(monitor['monitor_log_alive']) else False
-        monitor_log_err_rate = True if int(monitor['monitor_log_err_rate']) else False
-        if monitor_log_alive:
-            body = {
-                "recipients": recipients,
-                "spiderHost": tldextract.extract(data['addr']).domain,
-                "spiderProject": data['project'],
-                "spiderName": data['spider'],
-                "spiderJobId": job_id,
-                "monitorType": "日志存活时间",
-                "monitorFreq": int(monitor['monitor_freq']),
-                "threshold": int(monitor['log_alive_limit']),
-            }
-            res = self.client.post('/api/v1/schedule/monitorRules/', body, format='json')
-            self.logger.info(f'添加日志监控规则 {res}')
+        # monitor = redis_cli.hgetall(self.key)
+        # recipients = [] if not monitor['recipients'] else monitor['recipients'].split(',')
+        # monitor_log_alive = True if int(monitor['monitor_log_alive']) else False
+        # monitor_log_err_rate = True if int(monitor['monitor_log_err_rate']) else False
+        # if monitor_log_alive:
+        #     body = {
+        #         "recipients": recipients,
+        #         "spiderHost": tldextract.extract(data['addr']).domain,
+        #         "spiderProject": data['project'],
+        #         "spiderName": data['spider'],
+        #         "spiderJobId": job_id,
+        #         "monitorType": "日志存活时间",
+        #         "monitorFreq": int(monitor['monitor_freq']),
+        #         "threshold": int(monitor['log_alive_limit']),
+        #     }
+        #     res = self.client.post('/api/v1/schedule/monitorRules/', body, format='json')
+        #     self.logger.info(f'添加日志监控规则 {res}')
         return Response('ok')
 
     def delete(self, request, **kwargs):

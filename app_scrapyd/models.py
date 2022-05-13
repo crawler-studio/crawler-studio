@@ -10,6 +10,7 @@ class SpiderStats(models.Model):
     run_type = models.CharField(max_length=50, verbose_name='interval or crontab')
     last_run = models.DateTimeField()
     trigger = models.CharField(max_length=50)
+    record_time = models.DateTimeField(auto_now=True, verbose_name='当前时间')
     log_debug_count = models.BigIntegerField(default=0)
     log_info_count = models.BigIntegerField(default=0)
     log_warn_count = models.IntegerField(default=0)
