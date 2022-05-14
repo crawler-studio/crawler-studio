@@ -34,6 +34,9 @@ class DailyErrLogRate(models.Model):
     每天生成一条记录
     """
     id = models.AutoField(primary_key=True)
+    host = models.CharField(max_length=50)
+    project = models.CharField(max_length=255)
+    spider = models.CharField(max_length=255)
     job_id = models.CharField(max_length=50, db_index=True)
     log_total_count = models.IntegerField()
     log_error_count = models.IntegerField()
@@ -46,6 +49,9 @@ class HourlyErrLogRate(models.Model):
     每小时生成一条记录
     """
     id = models.AutoField(primary_key=True)
+    host = models.CharField(max_length=50)
+    project = models.CharField(max_length=255)
+    spider = models.CharField(max_length=255)
     job_id = models.CharField(max_length=50, db_index=True)
     log_total_count = models.IntegerField()
     log_error_count = models.IntegerField()
@@ -65,7 +71,7 @@ class ErrorLog(models.Model):
     job_id = models.CharField(max_length=50)
     content = models.TextField()
     level = models.CharField(max_length=20)
-    log_time = models.DateTimeField()
+    log_time = models.DateTimeField(db_index=True)
     module = models.CharField(max_length=1000)
     lineno = models.IntegerField()
     exc_info = models.TextField(null=True, default=None)
