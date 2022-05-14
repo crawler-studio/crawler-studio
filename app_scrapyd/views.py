@@ -1,5 +1,6 @@
 import logging
 import time
+import json
 import re
 import logging
 import requests
@@ -49,9 +50,9 @@ class RunningTaskCRUD(APIView):
                 item['spider'] = running['spider']
                 item['pid'] = running['pid']
                 item['start_time'] = running['start_time'].split('.')[0]
-                item['schedule_type'] = stats.run_type
-                item['trigger'] = stats.trigger
-                item['last_run'] = stats.last_run
+                item['schedule_type'] = 'Unknown' if stats is None else stats.run_type
+                item['trigger'] = 'Unknown' if stats is None else stats.trigger
+                item['last_run'] = 'Unknown' if stats is None else stats.last_run
                 running_info.append(item)
         running_info.sort(key=lambda _: _['start_time'], reverse=True)
         return Response(running_info)
@@ -133,18 +134,37 @@ class SpiderSettingCRUD(APIView):
 class SpiderStatsCRUD(APIView):
 
     def get(self, request, **kwargs):
-        return Response('ok')
+        """
+        获取爬虫运行状态，从`SpiderStats`表中取stats字段
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        job_id = request.query_params['jobId']
+        existed = SpiderStats.objects.filter(job_id=job_id).first()
+        if existed:
+            d = json.loads(existed.stats)
+            d = [{'key': k, 'value': v} for k, v in d.items()]
+            return Response(d, status=status.HTTP_200_OK)
+        else:
+            return Response('jobid not existed', status=status.HTTP_200_OK)
 
     def post(self, request, **kwargs):
+        """
+        在`SpiderStats`表中创建或更新爬虫状态
+        :param request:
+        :param kwargs:
+        :return:
+        """
         job_id = request.data['job_id']
         existed = SpiderStats.objects.filter(job_id=job_id).first()
         stats = SpiderStatsSer(instance=existed, data=request.data)
         if stats.is_valid():
             stats.save()
             if existed:
-                return Response(f'更新成功 {job_id}', status=status.HTTP_200_OK)
+                return Response(f'update success {job_id}', status=status.HTTP_200_OK)
             else:
-                return Response(f'添加成功 {job_id}', status=status.HTTP_200_OK)
+                return Response(f'create success {job_id}', status=status.HTTP_200_OK)
         else:
             logger.error(stats.errors)
             return Response(stats.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -250,21 +270,21 @@ def cancel_spider(request):
     result = scrapyd_container[addr].cancel(project, job_id)
     return JsonResponse(result, safe=False)
 
-
-def stats(request):
-    """
-    获取爬虫状态
-    test url: http://127.0.0.1:8000/api/v1/scrapyd/stats/?addr=http://10.0.4.150:6800&project=twitter&job_id=1087dc6456a611ec9f2d00163e290a0d&spider=twitter_loop
-    """
-    addr = request.GET['addr']
-    host = urlparse(addr).netloc.split(':')[0]
-    project = request.GET['project']
-    job_id = request.GET['job_id']
-    spider = request.GET['spider']
-    stats_key = f'scrapy_box:stats:{job_id}'
-    stats = redis_cli.hgetall(stats_key)
-    result = [{'key': k, 'value': v} for k, v in stats.items()]
-    return JsonResponse(result, safe=False)
+#
+# def stats(request):
+#     """
+#     获取爬虫状态
+#     test url: http://127.0.0.1:8000/api/v1/scrapyd/stats/?addr=http://10.0.4.150:6800&project=twitter&job_id=1087dc6456a611ec9f2d00163e290a0d&spider=twitter_loop
+#     """
+#     addr = request.GET['addr']
+#     host = urlparse(addr).netloc.split(':')[0]
+#     project = request.GET['project']
+#     job_id = request.GET['job_id']
+#     spider = request.GET['spider']
+#     stats_key = f'scrapy_box:stats:{job_id}'
+#     stats = redis_cli.hgetall(stats_key)
+#     result = [{'key': k, 'value': v} for k, v in stats.items()]
+#     return JsonResponse(result, safe=False)
 
 
 def check_cancel(request):
