@@ -14,8 +14,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from app_schedule.models import MonitorRules
-from .ser import SpiderStatsSer
-from .models import SpiderStats
+from .ser import SpiderStatsSer, HourlyErrLogRateSer, DailyErrLogRateSer, ErrorLogSer
+from .models import SpiderStats, HourlyErrLogRate, DailyErrLogRate, ErrorLog
 
 
 redis_cli = get_redis_from_name('pac2')
@@ -171,6 +171,56 @@ class SpiderStatsCRUD(APIView):
 
     def delete(self, request, **kwargs):
         pass
+
+
+class ErrorLogRateCRUD(APIView):
+
+    def get(self, request, **kwargs):
+        pass
+
+    def post(self, request, **kwargs):
+        if request.data.get('log_hour'):        # hourly api
+            job_id = request.data['job_id']
+            log_hour = request.data['log_hour']
+            existed = HourlyErrLogRate.objects.filter(job_id=job_id, log_hour=log_hour).first()
+            data = HourlyErrLogRateSer(instance=existed, data=request.data)
+            if data.is_valid():
+                data.save()
+                if existed:
+                    return Response(f'update success {job_id} {log_hour}', status=status.HTTP_200_OK)
+                else:
+                    return Response(f'create success {job_id} {log_hour}', status=status.HTTP_200_OK)
+            else:
+                logger.error(data.errors)
+                return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            job_id = request.data['job_id']             # daily api
+            log_date = request.data['log_date']
+            existed = DailyErrLogRate.objects.filter(job_id=job_id, log_date=log_date).first()
+            data = DailyErrLogRateSer(instance=existed, data=request.data)
+            if data.is_valid():
+                data.save()
+                if existed:
+                    return Response(f'update success {job_id} {log_date}', status=status.HTTP_200_OK)
+                else:
+                    return Response(f'create success {job_id} {log_date}', status=status.HTTP_200_OK)
+            else:
+                logger.error(data.errors)
+                return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)                # daily api
+
+
+class ErrorLogContentCRUD(APIView):
+    def get(self, request, **kwargs):
+        pass
+
+    def post(self, request, **kwargs):
+        data = ErrorLogSer(data=request.data)
+        if data.is_valid():
+            data.save()
+            return Response(f'create success', status=status.HTTP_200_OK)
+        else:
+            logger.error(data.errors)
+            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def list_finished(request):
