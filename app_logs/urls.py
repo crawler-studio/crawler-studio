@@ -10,5 +10,6 @@ from app_logs import views
 urlpatterns = [
     url('search/', views.search),
     url('log_analysis/', views.analysis_spider_error_log_out),
-    url('group_error_log/', views.group_error_log)
+    url('error_log_group_from_es/', views.error_log_group_from_es),
+    url('error_log_group_from_sql/', views.error_log_group_from_sql),
 ]
