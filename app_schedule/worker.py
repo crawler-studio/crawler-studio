@@ -157,7 +157,7 @@ def spider_monitor_task(**kwargs):
         error_status = True
 
     if error_status:
-        for rev in monitor_rule.recipients:
+        for rev in monitor_rule.recipients.all():
             if '@' in rev.rev_addr:         # mail receiver
                 send_mail(receiver=rev.rev_addr, subject='爬虫日志预警', content=report)
 
