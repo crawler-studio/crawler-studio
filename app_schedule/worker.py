@@ -11,7 +11,7 @@ import requests
 from elasticsearch import Elasticsearch
 from utils.message_transmit import send_ding_message, send_mail
 from utils.rabbitmq import RabbitMQ2
-from app_scrapyd.models import SpiderStats
+from app_scrapyd.models import SpiderStats, HourlyErrLogRate
 from app_schedule.models import MonitorRules
 
 logger = logging.getLogger(__name__)
@@ -124,13 +124,13 @@ def rabbitmq_task(**kwargs):
 
 def spider_monitor_task(**kwargs):
     logger.info(f'Spider_monitor_task worker rev task {kwargs}')
-    running_task = SpiderStats.objects.filter(job_id=kwargs['job_id']).first()
+    running_task = HourlyErrLogRate.objects.filter(job_id=kwargs['job_id']).order_by('-record_time').first()
     monitor_rule = MonitorRules.objects.filter(spider_job_id=kwargs['job_id']).first()
 
     error_status = False
     report = f'- 日志错误率异常爬虫如下'
     report += '\n'
-    report += f'- 主机 {running_task.ip}'
+    report += f'- 主机 {running_task.host}'
     report += '\n'
     report += f'- 项目 {running_task.project}'
     report += '\n'
@@ -138,19 +138,21 @@ def spider_monitor_task(**kwargs):
     report += '\n'
     report += f'- JOBID {running_task.job_id}'
     report += '\n'
-
-    if running_task.log_error_rate >= monitor_rule.errlog_rate_limit:
-        report += f'- 日志错误率上限: {monitor_rule.errlog_rate_limit*100}%'
-        report += '\n'
-        report += f'- 当前日志错误率: {running_task.log_error_rate*100}%'
-        report += '\n'
-        error_status = True
+    report += f'- 最近上报时间: {running_task.record_time}'
+    report += '\n'
 
     alive = (datetime.datetime.now()-running_task.record_time).seconds
     if alive >= monitor_rule.log_alive_limit:
         report += f'- 日志存活时间上限: {monitor_rule.log_alive_limit} sec'
         report += '\n'
         report += f'- 当前日志存活时间: {alive} sec'
+        report += '\n'
+        error_status = True
+
+    if running_task.log_error_rate >= monitor_rule.errlog_rate_limit:
+        report += f'- 日志错误率上限: {monitor_rule.errlog_rate_limit*100}%'
+        report += '\n'
+        report += f'- 当前日志错误率: {running_task.log_error_rate*100}%'
         report += '\n'
         error_status = True
 
