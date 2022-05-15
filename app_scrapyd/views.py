@@ -87,10 +87,10 @@ class RunningTaskCRUD(APIView):
             job_id = task['job_id']
             ins = ScrapydAPI(target=addr)
             ins.cancel(project, job_id)
-            rule = MonitorRules.objects.filter(spider_job_id=task['job_id']).first()
-            if rule:
-                res = self.client.delete('/api/v1/schedule/monitorRules/', data={'id': rule.id}, format='json')
-                self.logger.info(f'删除日志监控规则 {res}')
+            # rule = MonitorRules.objects.filter(spider_job_id=task['job_id']).first()
+            # if rule:
+            #     res = self.client.delete('/api/v1/schedule/monitorRules/', data={'id': rule.id}, format='json')
+            #     self.logger.info(f'删除日志监控规则 {res}')
         return Response(f'删除{len(request.data["checked_data"])}个任务成功')
 
 
