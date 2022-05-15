@@ -117,29 +117,33 @@ class MonitorRulesCRUD(APIView):
         return Response(ser.data)
 
     def post(self, request, **kwargs):
+        if 'recipients' not in request.data:       # add default recipients
+            rev = MonitorRecipients.objects.filter(is_default=1).all()
+            request.data['recipients'] = [_.rev_name for _ in rev]
+
         rule = MonitorRulesSerializer(data=request.data)
         if rule.is_valid():
             if MonitorRules.objects.filter(spider_job_id=rule.validated_data['spider_job_id']):
-                return Response('爬虫已有收件规则，请勿重复添加')
+                return Response('This jobid has monitor rule already')
             else:
-                rule.save()
-                return Response('添加成功', status=status.HTTP_200_OK)
+                obj = rule.save()
+                return Response(f'Create success {obj.id}', status=status.HTTP_200_OK)
         else:
             self.logger.error(rule.errors)
             return Response(rule.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, **kwargs):
-        existed = MonitorRules.objects.filter(pk=request.data['id']).first()
+        existed = MonitorRules.objects.filter(spider_job_id=request.data['spider_job_id']).first()
         rule = MonitorRulesSerializer(instance=existed, data=request.data)
         if rule.is_valid():
             rule.save()
-            return Response('更新成功', status=status.HTTP_200_OK)
+            return Response('Update success', status=status.HTTP_200_OK)
         else:
             self.logger.error(rule.errors)
             return Response(rule.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, **kwargs):
-        rule = MonitorRules.objects.filter(id=request.data['id']).first()
+        rule = MonitorRules.objects.filter(spider_job_id=request.data['spider_job_id']).first()
         scheduler.remove_job(rule.timer_task.id)
-        self.logger.info(f'删除定时任务成功 {rule.timer_task}')
-        return Response('删除成功', status=status.HTTP_200_OK)
+        self.logger.info(f'Delete timer task success {rule.timer_task}')
+        return Response('Delete success', status=status.HTTP_200_OK)
