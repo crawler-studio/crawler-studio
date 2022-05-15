@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
-from app_schedule.views import TimerScheduler
+# from app_schedule.views import TimerScheduler
 
 
 urlpatterns = [

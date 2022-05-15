@@ -14,68 +14,68 @@ from app_schedule import worker
 from utils.timer_scheduler import scheduler
 
 
-class TimerScheduler(APIView):
-    """
-    Method: POST
-        type:
-        desc: 发布一条定时任务
-        url: http://localhost:8000/api/v1/schedule/
-        body:
-        {
-            'taskId': '',
-            'ScheduleType': 'cron'/'date'/'interval'/,
-            'ScheduleExp': '* * 1 * *',
-            'worker': 'monitor_task',
-            'Params': {
-                sourceId: '',
-                sourceName: '',
-                sourcePath: '',
-            }
-        }
-    """
-    def __init__(self):
-        super(TimerScheduler, self).__init__()
-        self.logger = logging.getLogger('TimerScheduler')
-
-    def post(self, request, **kwargs):
-        """添加后台定时任务"""
-        body = request.data
-        try:
-            if DjangoJob.objects.filter(id=str(body['task_id'])):
-                raise ItemExistedException
-
-            if body['schedule_type'] == 'cron':
-                scheduler.add_job(
-                    rabbitmq_task,
-                    CronTrigger.from_crontab(body['schedule_exp']),
-                    kwargs=body['params']
-                )
-            elif body['schedule_type'] == 'date':
-                pass
-            elif body['schedule_type'] == 'interval':
-                task_info = scheduler.add_job(
-                    getattr(worker, body['worker']),
-                    id=str(body['task_id']),
-                    trigger='interval',
-                    seconds=body['schedule_exp'],
-                    kwargs=body['params'],
-                    misfire_grace_time=1000
-                )
-                return Response(f'添加定时任务成功 {task_info}', status=status.HTTP_200_OK)
-            else:
-                raise ValueError('type参数错误')
-        except ItemExistedException:
-            return Response('任务ID已存在', status=status.HTTP_208_ALREADY_REPORTED)
-        except Exception as e:
-            return Response(f'异常 {e}', status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, **kwargs):
-        job_id = request.data['job_id']
-        if DjangoJob.objects.filter(id=job_id):
-            scheduler.remove_job(job_id)
-            return Response('删除成功')
-        else:
-            return Response(f'jobId {job_id} 不存在')
+# class TimerScheduler(APIView):
+#     """
+#     Method: POST
+#         type:
+#         desc: 发布一条定时任务
+#         url: http://localhost:8000/api/v1/schedule/
+#         body:
+#         {
+#             'taskId': '',
+#             'ScheduleType': 'cron'/'date'/'interval'/,
+#             'ScheduleExp': '* * 1 * *',
+#             'worker': 'monitor_task',
+#             'Params': {
+#                 sourceId: '',
+#                 sourceName: '',
+#                 sourcePath: '',
+#             }
+#         }
+#     """
+#     def __init__(self):
+#         super(TimerScheduler, self).__init__()
+#         self.logger = logging.getLogger('TimerScheduler')
+#
+#     def post(self, request, **kwargs):
+#         """添加后台定时任务"""
+#         body = request.data
+#         try:
+#             if DjangoJob.objects.filter(id=str(body['task_id'])):
+#                 raise ItemExistedException
+#
+#             if body['schedule_type'] == 'cron':
+#                 scheduler.add_job(
+#                     rabbitmq_task,
+#                     CronTrigger.from_crontab(body['schedule_exp']),
+#                     kwargs=body['params']
+#                 )
+#             elif body['schedule_type'] == 'date':
+#                 pass
+#             elif body['schedule_type'] == 'interval':
+#                 task_info = scheduler.add_job(
+#                     getattr(worker, body['worker']),
+#                     id=str(body['task_id']),
+#                     trigger='interval',
+#                     seconds=body['schedule_exp'],
+#                     kwargs=body['params'],
+#                     misfire_grace_time=1000
+#                 )
+#                 return Response(f'添加定时任务成功 {task_info}', status=status.HTTP_200_OK)
+#             else:
+#                 raise ValueError('type参数错误')
+#         except ItemExistedException:
+#             return Response('任务ID已存在', status=status.HTTP_208_ALREADY_REPORTED)
+#         except Exception as e:
+#             return Response(f'异常 {e}', status=status.HTTP_400_BAD_REQUEST)
+#
+#     def delete(self, request, **kwargs):
+#         job_id = request.data['job_id']
+#         if DjangoJob.objects.filter(id=job_id):
+#             scheduler.remove_job(job_id)
+#             return Response('删除成功')
+#         else:
+#             return Response(f'jobId {job_id} 不存在')
 
 
 class MonitorRecipientsCRUD(APIView):

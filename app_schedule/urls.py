@@ -10,7 +10,7 @@ from app_schedule import views
 
 
 urlpatterns = [
-    path('timerTask/', views.TimerScheduler.as_view()),
+    # path('timerTask/', views.TimerScheduler.as_view()),
     path('monitorRecipients/', views.MonitorRecipientsCRUD.as_view()),
     path('monitorRules/', views.MonitorRulesCRUD.as_view())
 ]
