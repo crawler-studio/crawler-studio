@@ -160,7 +160,7 @@ def spider_monitor_task(**kwargs):
     if spider_stats.memory_use > monitor_rule.memory_use_limit:
         report += f'- 内存占用上限: {monitor_rule.memory_use_limit}MB'
         report += '\n'
-        report += f'- 当前内存占用: {spider_stats.max_memory_use}MB'
+        report += f'- 当前内存占用: {spider_stats.memory_use}MB'
         report += '\n'
         error_status = True
 
