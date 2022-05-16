@@ -53,6 +53,8 @@ class RunningTaskCRUD(APIView):
                 item['schedule_type'] = 'Unknown' if stats is None else stats.run_type
                 item['trigger'] = 'Unknown' if stats is None else stats.trigger
                 item['last_run'] = 'Unknown' if stats is None else stats.last_run
+                item['max_memory_use'] = 'Unknown' if stats is None else stats.max_memory_use
+                item['log_hourly_error_rate'] = 'Unknown' if stats is None else stats.log_hourly_error_rate
                 running_info.append(item)
         running_info.sort(key=lambda _: _['start_time'], reverse=True)
         return Response(running_info)
