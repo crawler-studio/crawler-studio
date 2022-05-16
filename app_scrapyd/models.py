@@ -19,7 +19,7 @@ class SpiderStats(models.Model):
     log_error_count = models.IntegerField(default=0)
     log_critical_count = models.IntegerField(default=0)
     log_hourly_error_rate = models.FloatField(verbose_name='1小时日志错误率')
-    max_memory_use = models.CharField(max_length=50)
+    memory_use = models.FloatField(null=True, verbose_name='占用最大的内存')
     start_time = models.DateTimeField()
     finish_time = models.DateTimeField(null=True, default=None)
     finish_reason = models.CharField(max_length=255, verbose_name='爬虫关闭原因', default='', null=True)
