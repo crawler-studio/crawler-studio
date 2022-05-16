@@ -314,8 +314,9 @@ def error_log_group_from_sql(request):
     result = HourlyErrLogRate.objects.raw(sql)
     hosts = set(_.host for _ in result)
     today = datetime.datetime.now().strftime('%Y-%m-%d')
+    now_hour = datetime.datetime.now().hour
     data = []
-    for hour in range(24):
+    for hour in range(now_hour+1):
         row_data = dict()
         row_data['时间'] = f'{today}T{str(hour).zfill(2)}:00:00'
         for host in hosts:
