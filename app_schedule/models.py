@@ -24,6 +24,7 @@ class MonitorRules(models.Model):
     monitor_freq = models.IntegerField(verbose_name='监控频率，秒为单位', default=1800)
     log_alive_limit = models.IntegerField(default=80, verbose_name='日志存活时间上限, 默认80sec')
     errlog_rate_limit = models.FloatField(default=0.005, verbose_name='1小时日志错误率上限，默认0.5%')
+    memory_use_limit = models.IntegerField(default=500, verbose_name='占用最大内存，默认500MB')
     recipients = models.ManyToManyField(MonitorRecipients, verbose_name='收件人')
     create_time = models.DateTimeField(auto_now=True)
     update_time = models.DateTimeField(auto_now_add=True)

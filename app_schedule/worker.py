@@ -126,6 +126,7 @@ def spider_monitor_task(**kwargs):
     logger.info(f'Spider_monitor_task worker rev task {kwargs}')
     running_task = HourlyErrLogRate.objects.filter(job_id=kwargs['job_id']).order_by('-record_time').first()
     monitor_rule = MonitorRules.objects.filter(spider_job_id=kwargs['job_id']).first()
+    spider_stats = SpiderStats.objects.filter(job_id=kwargs['job_id']).first()
 
     error_status = False
     report = f'- 日志错误率异常爬虫如下'
@@ -153,6 +154,13 @@ def spider_monitor_task(**kwargs):
         report += f'- 日志错误率上限: {monitor_rule.errlog_rate_limit*100}%'
         report += '\n'
         report += f'- 当前日志错误率: {running_task.log_error_rate*100}%'
+        report += '\n'
+        error_status = True
+
+    if spider_stats.max_memory_use > monitor_rule.memory_use_limit:
+        report += f'- 内存占用上限: {monitor_rule.memory_use_limit}MB'
+        report += '\n'
+        report += f'- 当前内存占用: {spider_stats.max_memory_use}MB'
         report += '\n'
         error_status = True
 

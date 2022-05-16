@@ -44,6 +44,7 @@ class RunningTaskCRUD(APIView):
             j = ins.list_jobs(p)
             for running in j['running']:
                 stats = SpiderStats.objects.filter(job_id=running['id']).first()
+                monitor_rule = MonitorRules.objects.filter(spider_job_id=running['id']).first()
                 item = dict()
                 item['project'] = p
                 item['job_id'] = running['id']
@@ -54,7 +55,9 @@ class RunningTaskCRUD(APIView):
                 item['trigger'] = 'Unknown' if stats is None else stats.trigger
                 item['last_run'] = 'Unknown' if stats is None else stats.last_run
                 item['max_memory_use'] = 'Unknown' if stats is None else stats.max_memory_use
+                item['memory_user_limit'] = 100000 if monitor_rule is None else monitor_rule.memory_use_limit
                 item['log_hourly_error_rate'] = 'Unknown' if stats is None else stats.log_hourly_error_rate
+                item['log_hourly_error_limit'] = 100 if monitor_rule is None else monitor_rule.errlog_rate_limit
                 running_info.append(item)
         running_info.sort(key=lambda _: _['start_time'], reverse=True)
         return Response(running_info)
