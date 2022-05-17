@@ -49,12 +49,12 @@ def send_ding_message(title, content, ding_addr=DING_ROBOT_ADDR):
         logger.error(f'发送钉钉消息失败, {res.text}')
 
 
-def send_mail(receiver: list, subject: str = "", content: str = "",
+def send_mail(receiver: str, subject: str = "", content: str = "",
               attach='', sender=MAIL_SENDER, auth_code=MAIL_AUTH_CODE, server_addr=MAIL_SERVER_ADDR, server_port=MAIL_PORT):
     """
     发送带附件的邮件
     :param attach: 附件全路径
-    :param receiver: 收件人，列表形式
+    :param receiver: 收件人
     :param subject: 主题
     :param content: 正文
     :param sender:  发件人，可在系统设置中设置默认值
@@ -67,7 +67,7 @@ def send_mail(receiver: list, subject: str = "", content: str = "",
     msg = MIMEMultipart()
     msg['Subject'] = subject  # 主题
     msg['From'] = sender  # 发件人
-    msg['To'] = ','.join(receiver)  # 收件人
+    msg['To'] = receiver  # 收件人
 
     # 构建正文
     part_text = MIMEText(content)
@@ -95,4 +95,4 @@ def send_mail(receiver: list, subject: str = "", content: str = "",
 
 if __name__ == '__main__':
     # send_ding_message('虎博爬虫预警', '测试')
-    send_mail(receiver=['862187570@qq.com'], subject='爬虫测试', content='测试内容哦～')
+    send_mail(receiver='862187570@qq.com', subject='爬虫测试', content='测试内容哦～')
