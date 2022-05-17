@@ -24,11 +24,6 @@ class MonitorRulesSerializer(serializers.ModelSerializer):
 
     recipients = serializers.SlugRelatedField(many=True, slug_field='rev_name', queryset=MonitorRecipients.objects.all())
     next_run_time = serializers.DateTimeField(source='timer_task.next_run_time', required=False, format='%Y-%m-%d %H:%M:%S')
-    monitor_freq = serializers.SerializerMethodField()
-
-
-    def get_monitor_freq(self, obj):
-        return int(obj.monitor_freq/60)
 
     def create(self, validated_data):
         rev = validated_data.pop('recipients')
