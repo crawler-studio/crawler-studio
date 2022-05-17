@@ -55,9 +55,9 @@ class RunningTaskCRUD(APIView):
                 item['trigger'] = 'Unknown' if stats is None else stats.trigger
                 item['last_run'] = 'Unknown' if stats is None else stats.last_run
                 item['memory_use'] = 0 if stats is None else stats.memory_use
-                item['memory_user_limit'] = 100000 if monitor_rule is None else monitor_rule.memory_use_limit
+                item['memory_use_limit'] = 'Unknown' if monitor_rule is None else monitor_rule.memory_use_limit
                 item['log_hourly_error_rate'] = 'Unknown' if stats is None else stats.log_hourly_error_rate
-                item['log_hourly_error_limit'] = 100 if monitor_rule is None else monitor_rule.errlog_rate_limit
+                item['log_hourly_error_limit'] = 'Unknown' if monitor_rule is None else monitor_rule.errlog_rate_limit
                 running_info.append(item)
         running_info.sort(key=lambda _: _['start_time'], reverse=True)
         return Response(running_info)
