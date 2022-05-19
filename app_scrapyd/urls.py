@@ -10,13 +10,13 @@ from django.urls import path
 
 urlpatterns = [
     url('spider_finished/', views.list_finished),
-    url('spider_all/', views.list_spiders),
     url('project_all/', views.project_info),
     url('cancel_spider/', views.cancel_spider),
     url('check_cancel/', views.check_cancel),
     url('runningTask/', views.RunningTaskCRUD.as_view()),
-    url('spiderSetting/', views.SpiderSettingCRUD.as_view()),
+    url('spiderStartParams/', views.SpiderStartParamsCRUD.as_view()),
     url('spiderStats/', views.SpiderStatsCRUD.as_view()),
     url('errorLogRate/', views.ErrorLogRateCRUD.as_view()),
-    url('errorLogContent/', views.ErrorLogContentCRUD.as_view())
+    url('errorLogContent/', views.ErrorLogContentCRUD.as_view()),
+    url('newTask/', views.NewTaskCRUD.as_view())
 ]

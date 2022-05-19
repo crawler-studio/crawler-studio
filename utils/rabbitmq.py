@@ -131,6 +131,6 @@ class RabbitMQ2(object):
         self.send('task_ret', crawl_result)
 
 
-if __name__ == '__main__':
-    rs = RabbitMQ2().get('news_twitter')
-    print(rs)
+# if __name__ == '__main__':
+#     rs = RabbitMQ2().get('news_twitter')
+#     print(rs)

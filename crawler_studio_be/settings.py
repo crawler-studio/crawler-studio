@@ -153,27 +153,6 @@ assert os.getenv("ENV", "dev") in ('dev', 'test', 'prod')
 env.read_env(f'.env.{os.getenv("ENV", "dev")}')
 
 
-REDIS_CONFIG = {
-    'pac2': {
-        'host': '10.0.4.145',
-        'port': 6379,
-        'password': None,
-    }
-}
-
-
-def get_redis_from_name(name, db=0):
-    assert name in REDIS_CONFIG
-    pool = redis.ConnectionPool(
-            host=REDIS_CONFIG[name]['host'],
-            port=REDIS_CONFIG[name]['port'],
-            password=REDIS_CONFIG[name]['password'],
-            db=db,
-            decode_responses=True
-    )
-    return redis.StrictRedis(connection_pool=pool, decode_responses=True)
-
-
 RABBITMQ_HOST = env.str('RABBITMQ_HOST')
 RABBITMQ_PORT = env.int('RABBITMQ_PORT')
 RABBITMQ_USER = env.str('RABBITMQ_USER')
@@ -213,7 +192,7 @@ LOGGING = {
         },
         # 简单的日志格式
         'simple': {
-            'format': '%(asctime)s [%(levelname)s][%(filename)s:%(lineno)d]: %(message)s'
+            'format': '%(asctime)s [%(name)s:%(funcName)s:%(lineno)d] %(levelname)s: %(message)s'
         },
         # 定义一个特殊的日志格式
         'collect': {

@@ -1,24 +1,19 @@
-import logging
-import time
 import json
 import re
 import logging
-import requests
-import tldextract
 from scrapyd_api import ScrapydAPI
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from crawler_studio_be.settings import get_redis_from_name
-from urllib.parse import urlparse
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from app_schedule.models import MonitorRules
-from .ser import SpiderStatsSer, HourlyErrLogRateSer, DailyErrLogRateSer, ErrorLogSer
-from .models import SpiderStats, HourlyErrLogRate, DailyErrLogRate, ErrorLog
+from django.forms.models import model_to_dict
+from .ser import SpiderStatsSer, HourlyErrLogRateSer, DailyErrLogRateSer, ErrorLogSer, \
+    SpiderStartParamsSer
+from .models import SpiderStats, HourlyErrLogRate, DailyErrLogRate, ErrorLog, \
+     SpiderStartParams
 
 
-redis_cli = get_redis_from_name('pac2')
 logger = logging.getLogger()
 scrapyd_container = dict()
 
@@ -63,27 +58,7 @@ class RunningTaskCRUD(APIView):
         return Response(running_info)
 
     def post(self, request, **kwargs):
-        data = request.data
-        ins = ScrapydAPI(target=data['addr'])
-        job_id = ins.schedule(data['project'], data['spider'])
-        # monitor = redis_cli.hgetall(self.key)
-        # recipients = [] if not monitor['recipients'] else monitor['recipients'].split(',')
-        # monitor_log_alive = True if int(monitor['monitor_log_alive']) else False
-        # monitor_log_err_rate = True if int(monitor['monitor_log_err_rate']) else False
-        # if monitor_log_alive:
-        #     body = {
-        #         "recipients": recipients,
-        #         "spiderHost": tldextract.extract(data['addr']).domain,
-        #         "spiderProject": data['project'],
-        #         "spiderName": data['spider'],
-        #         "spiderJobId": job_id,
-        #         "monitorType": "日志存活时间",
-        #         "monitorFreq": int(monitor['monitor_freq']),
-        #         "threshold": int(monitor['log_alive_limit']),
-        #     }
-        #     res = self.client.post('/api/v1/schedule/monitorRules/', body, format='json')
-        #     self.logger.info(f'添加日志监控规则 {res}')
-        return Response('ok')
+        pass
 
     def delete(self, request, **kwargs):
         for task in request.data['checked_data']:
@@ -92,45 +67,83 @@ class RunningTaskCRUD(APIView):
             job_id = task['job_id']
             ins = ScrapydAPI(target=addr)
             ins.cancel(project, job_id)
-            # rule = MonitorRules.objects.filter(spider_job_id=task['job_id']).first()
-            # if rule:
-            #     res = self.client.delete('/api/v1/schedule/monitorRules/', data={'id': rule.id}, format='json')
-            #     self.logger.info(f'删除日志监控规则 {res}')
         return Response(f'删除{len(request.data["checked_data"])}个任务成功')
 
 
-class SpiderSettingCRUD(APIView):
-
-    def __init__(self):
-        super(SpiderSettingCRUD, self).__init__()
-        self.key = f'crawler_studio_be:scrapyd:setting'
-        data = redis_cli.hgetall(self.key)
-        if not data:
-            data = {
-                'monitor_log_alive': '1',
-                'log_alive_limit': '70',
-                'monitor_log_err_rate': '1',
-                'log_err_rate_limit': '5',
-                'monitor_freq': '1800',
-                'recipients': '',
-            }
-            for k, v in data.items():
-                redis_cli.hset(self.key, k, v)
+class NewTaskCRUD(APIView):
 
     def get(self, request, **kwargs):
-        data = redis_cli.hgetall(self.key)
-        data['recipients'] = [] if not data['recipients'] else data['recipients'].split(',')
-        data['monitor_log_alive'] = True if int(data['monitor_log_alive']) else False
-        data['monitor_log_err_rate'] = True if int(data['monitor_log_err_rate']) else False
-        return Response(data)
+        """
+        获取所有项目的所有爬虫及其启动参数，先获取默认参数，再获取此爬虫的参数
+        test url: http://127.0.0.1:8000/api/v1/scrapyd/newTask/?addr=http://10.0.4.150:6800
+        """
+        host = request.query_params['host']
+        scrapyd = ScrapydAPI(target=host)
+        projects = scrapyd.list_projects()
+        info = []
+        default_params = SpiderStartParams.objects.filter(project='__default', spider='__default').first()
+        for project in projects:
+            if project not in ('.DS_Store', 'default'):
+                try:
+                    spiders = scrapyd.list_spiders(project)
+                    for spider in spiders:
+                        spider_params = SpiderStartParams.objects.filter(project=project, spider=spider).first()
+                        if spider_params:
+                            ser = SpiderStartParamsSer(spider_params)
+                            item = ser.data
+                        else:
+                            ser = SpiderStartParamsSer(default_params)
+                            item = ser.data
+                            item.update({
+                                'project': project,
+                                'spider': spider
+                            })
+                        info.append(item)
+                except Exception as e:
+                    logger.error(e)
+        return Response(info, status=status.HTTP_200_OK)
 
     def post(self, request, **kwargs):
+        """
+        启动爬虫，并且传递设置参数
+        """
         data = request.data
-        data['recipients'] = ','.join(data['recipients'])
-        data['monitor_log_alive'] = '1' if data['monitor_log_alive'] else '0'
-        data['monitor_log_err_rate'] = '1' if data['monitor_log_err_rate'] else '0'
-        redis_cli.hmset(self.key, request.data)
-        return Response('保存成功')
+        setting = {}
+        if data['run_type'] == 'interval':
+            setting['LOOP_INTERVAL'] = int(data['trigger'])
+        if data['run_type'] == 'crontab':
+            setting['LOOP_CRONTAB'] = data['trigger']
+        setting['CS_ENABLE_MONITOR_RULE'] = data['enable_monitor_rule']
+        setting['CS_ENABLE_SEND_ERR_TEXT'] = data['enable_send_error_log']
+        setting['CS_MONITOR_FREQ'] = int(data['monitor_freq'])
+        setting['CS_ERRLOG_RATE_LIMIT'] = float(data['errlog_rate_limit'])
+        setting['CS_MEMORY_USE_LIMIT'] = int(data['memory_use_limit'])
+        ins = ScrapydAPI(target=data['host'])
+        job_id = ins.schedule(data['project'], data['spider'])
+        # job_id = '111'
+        return Response(job_id, status=status.HTTP_200_OK)
+
+
+class SpiderStartParamsCRUD(APIView):
+
+    def get(self, request, **kwargs):
+        project = request.query_params.get('project', '__default')
+        data = SpiderStartParams.objects.filter(project=project).first()
+        ser = SpiderStartParamsSer(data)
+        return Response(ser.data)
+
+    def post(self, request, **kwargs):
+        existed = SpiderStartParams.objects.filter(project=request.data['project'], spider=request.data['spider']).first()
+        params = SpiderStartParamsSer(instance=existed, data=request.data)
+        if params.is_valid():
+            params.save()
+            if existed:
+                return Response(f"update success", status=status.HTTP_200_OK)
+            else:
+                return Response(f"create success", status=status.HTTP_200_OK)
+        else:
+            logger.error(params.errors)
+            return Response(params.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, **kwargs):
         pass
@@ -186,15 +199,16 @@ class ErrorLogRateCRUD(APIView):
     def post(self, request, **kwargs):
         if request.data.get('log_hour'):        # hourly api
             job_id = request.data['job_id']
+            log_date = request.data['log_date']
             log_hour = request.data['log_hour']
-            existed = HourlyErrLogRate.objects.filter(job_id=job_id, log_hour=log_hour).first()
+            existed = HourlyErrLogRate.objects.filter(job_id=job_id, log_date=log_date, log_hour=log_hour).first()
             data = HourlyErrLogRateSer(instance=existed, data=request.data)
             if data.is_valid():
                 data.save()
                 if existed:
-                    return Response(f'update success {job_id} {log_hour}', status=status.HTTP_200_OK)
+                    return Response(f'update success {job_id} {log_date}-{log_hour}', status=status.HTTP_200_OK)
                 else:
-                    return Response(f'create success {job_id} {log_hour}', status=status.HTTP_200_OK)
+                    return Response(f'create success {job_id} {log_date}-{log_hour}', status=status.HTTP_200_OK)
             else:
                 logger.error(data.errors)
                 return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -252,33 +266,6 @@ def list_finished(request):
     return JsonResponse(finished_info, safe=False)
 
 
-def list_spiders(request):
-    """
-    获取所有项目的所有爬虫
-    test url: http://127.0.0.1:8000/api/v1/scrapyd/spider_all/?addr=http://10.0.4.150:6800
-    """
-    addr = request.GET['addr']
-    if addr not in scrapyd_container:
-        scrapyd_container[addr] = ScrapydAPI(target=addr)
-
-    projects = scrapyd_container[addr].list_projects()
-    info = []
-    for project in projects:
-        if project not in ('.DS_Store', 'default'):
-            try:
-                spiders = scrapyd_container[addr].list_spiders(project)
-                for spider in spiders:
-                    item = {
-                        'project': project,
-                        'spider': spider
-                    }
-                    info.append(item)
-            except Exception as e:
-                logger.error(f'异常: {e}', exc_info=True)
-
-    return JsonResponse(info, safe=False)
-
-
 def project_info(request):
     """
     获取项目信息
@@ -324,22 +311,6 @@ def cancel_spider(request):
 
     result = scrapyd_container[addr].cancel(project, job_id)
     return JsonResponse(result, safe=False)
-
-#
-# def stats(request):
-#     """
-#     获取爬虫状态
-#     test url: http://127.0.0.1:8000/api/v1/scrapyd/stats/?addr=http://10.0.4.150:6800&project=twitter&job_id=1087dc6456a611ec9f2d00163e290a0d&spider=twitter_loop
-#     """
-#     addr = request.GET['addr']
-#     host = urlparse(addr).netloc.split(':')[0]
-#     project = request.GET['project']
-#     job_id = request.GET['job_id']
-#     spider = request.GET['spider']
-#     stats_key = f'scrapy_box:stats:{job_id}'
-#     stats = redis_cli.hgetall(stats_key)
-#     result = [{'key': k, 'value': v} for k, v in stats.items()]
-#     return JsonResponse(result, safe=False)
 
 
 def check_cancel(request):
