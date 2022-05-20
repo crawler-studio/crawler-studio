@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'exwi2z^6iwbb4ndijt2b+3d9x*zu2q47p*gz#62=5j9&u=0i**'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.getenv('ENV', 'dev') == 'dev' else False
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', '124.222.86.71']
 CORS_ORIGIN_ALLOW_ALL = True
 
