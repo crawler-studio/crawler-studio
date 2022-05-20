@@ -64,6 +64,8 @@ class DailyErrLogRate(models.Model):
     log_error_count = models.IntegerField()
     log_error_rate = models.FloatField(verbose_name='一天范围日志错误率')
     log_date = models.DateField()
+    create_time = models.DateTimeField(auto_now=True)
+    update_time = models.DateTimeField(auto_now_add=True)
 
 
 class HourlyErrLogRate(models.Model):
@@ -81,6 +83,8 @@ class HourlyErrLogRate(models.Model):
     log_error_rate = models.FloatField(verbose_name='一小时范围日志错误率')
     log_date = models.DateField()
     log_hour = models.IntegerField(verbose_name='0-23 represent 24 hours')
+    create_time = models.DateTimeField(auto_now=True)
+    update_time = models.DateTimeField(auto_now_add=True)
 
 
 class ErrorLog(models.Model):
@@ -100,3 +104,5 @@ class ErrorLog(models.Model):
     lineno = models.IntegerField()
     exc_info = models.TextField(null=True, default=None)
     func_name = models.CharField(max_length=255, default=None)
+    create_time = models.DateTimeField(auto_now=True)
+    update_time = models.DateTimeField(auto_now_add=True)
