@@ -14,7 +14,7 @@ from .models import SpiderStats, HourlyErrLogRate, DailyErrLogRate, ErrorLog, \
      SpiderStartParams
 
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 scrapyd_container = dict()
 
 
@@ -118,7 +118,7 @@ class NewTaskCRUD(APIView):
         setting['CS_MONITOR_FREQ'] = int(data['monitor_freq'])
         setting['CS_ERRLOG_RATE_LIMIT'] = float(data['errlog_rate_limit'])
         setting['CS_MEMORY_USE_LIMIT'] = int(data['memory_use_limit'])
-        logger.info(setting)
+        logger.info(f'Start spider, spider settings {setting}')
         ins = ScrapydAPI(target=data['host'])
         job_id = ins.schedule(data['project'], data['spider'], settings=setting)
         return Response(job_id, status=status.HTTP_200_OK)

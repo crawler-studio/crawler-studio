@@ -153,7 +153,7 @@ def spider_monitor_task(**kwargs):
     if running_task.log_error_rate >= monitor_rule.errlog_rate_limit:
         report += f'- 日志错误率上限: {monitor_rule.errlog_rate_limit*100}%'
         report += '\n'
-        report += f'- 当前日志错误率: {running_task.log_error_rate*100}%'
+        report += f'- 当前日志错误率: {round(running_task.log_error_rate*100, 2)}%'
         report += '\n'
         error_status = True
 
