@@ -129,40 +129,44 @@ def spider_monitor_task(**kwargs):
     spider_stats = SpiderStats.objects.filter(job_id=kwargs['job_id']).first()
 
     error_status = False
-    report = f'- 日志错误率异常爬虫如下'
-    report += '\n'
-    report += f'- 主机 {running_task.host}'
-    report += '\n'
-    report += f'- 项目 {running_task.project}'
-    report += '\n'
-    report += f'- 爬虫 {running_task.spider}'
-    report += '\n'
-    report += f'- JOBID {running_task.job_id}'
-    report += '\n'
-    report += f'- 最近上报时间: {running_task.record_time}'
-    report += '\n'
-
-    alive = (datetime.datetime.now()-running_task.record_time).seconds
-    if alive >= monitor_rule.log_alive_limit:
-        report += f'- 日志存活时间上限: {monitor_rule.log_alive_limit} sec'
-        report += '\n'
-        report += f'- 当前日志存活时间: {alive} sec'
-        report += '\n'
+    if running_task is None:
         error_status = True
+        report = f'- 爬虫开启监控后未上报运行状态，请检查～'
+    else:
+        report = f'- 日志错误率异常爬虫如下'
+        report += '\n'
+        report += f'- 主机 {running_task.host}'
+        report += '\n'
+        report += f'- 项目 {running_task.project}'
+        report += '\n'
+        report += f'- 爬虫 {running_task.spider}'
+        report += '\n'
+        report += f'- JOBID {running_task.job_id}'
+        report += '\n'
+        report += f'- 最近上报时间: {running_task.record_time}'
+        report += '\n'
 
-    if running_task.log_error_rate >= monitor_rule.errlog_rate_limit:
-        report += f'- 日志错误率上限: {monitor_rule.errlog_rate_limit*100}%'
-        report += '\n'
-        report += f'- 当前日志错误率: {round(running_task.log_error_rate*100, 2)}%'
-        report += '\n'
-        error_status = True
+        alive = (datetime.datetime.now()-running_task.record_time).seconds
+        if alive >= monitor_rule.log_alive_limit:
+            report += f'- 日志存活时间上限: {monitor_rule.log_alive_limit} sec'
+            report += '\n'
+            report += f'- 当前日志存活时间: {alive} sec'
+            report += '\n'
+            error_status = True
 
-    if spider_stats.memory_use > monitor_rule.memory_use_limit:
-        report += f'- 内存占用上限: {monitor_rule.memory_use_limit}MB'
-        report += '\n'
-        report += f'- 当前内存占用: {spider_stats.memory_use}MB'
-        report += '\n'
-        error_status = True
+        if running_task.log_error_rate >= monitor_rule.errlog_rate_limit:
+            report += f'- 日志错误率上限: {monitor_rule.errlog_rate_limit*100}%'
+            report += '\n'
+            report += f'- 当前日志错误率: {round(running_task.log_error_rate*100, 2)}%'
+            report += '\n'
+            error_status = True
+
+        if spider_stats.memory_use > monitor_rule.memory_use_limit:
+            report += f'- 内存占用上限: {monitor_rule.memory_use_limit}MB'
+            report += '\n'
+            report += f'- 当前内存占用: {spider_stats.memory_use}MB'
+            report += '\n'
+            error_status = True
 
     if error_status:
         for rev in monitor_rule.recipients.all():
