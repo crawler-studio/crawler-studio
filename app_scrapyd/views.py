@@ -197,7 +197,7 @@ class ErrorLogRateCRUD(APIView):
         pass
 
     def post(self, request, **kwargs):
-        if request.data.get('log_hour') is None:        # hourly api
+        if request.data.get('log_hour') is not None:        # hourly api
             job_id = request.data['job_id']
             log_date = request.data['log_date']
             log_hour = request.data['log_hour']
