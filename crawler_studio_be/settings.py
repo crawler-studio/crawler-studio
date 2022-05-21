@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'app_logs',
     'app_settings',
     'app_dashboard',
-    'app_source',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',

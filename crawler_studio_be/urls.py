@@ -28,6 +28,5 @@ urlpatterns = [
     path('api/v1/user/', include('app_user.urls')),
     path('api/v1/logs/', include('app_logs.urls')),
     path('api/v1/dashboard/', include('app_dashboard.urls')),
-    path('api/v1/source/', include('app_source.urls')),
     path('api/v1/schedule/', include('app_schedule.urls')),
 ]
