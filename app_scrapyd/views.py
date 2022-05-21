@@ -165,7 +165,7 @@ class SpiderStatsCRUD(APIView):
             d = [{'key': k, 'value': v} for k, v in d.items()]
             return Response(d, status=status.HTTP_200_OK)
         else:
-            return Response('jobid not existed', status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     def post(self, request, **kwargs):
         """
