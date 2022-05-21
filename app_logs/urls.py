@@ -12,4 +12,5 @@ urlpatterns = [
     url('log_analysis/', views.analysis_spider_error_log_out),
     url('error_log_group_from_es/', views.error_log_group_from_es),
     url('error_log_group_from_sql/', views.error_log_group_from_sql),
+    url('error_log_content/', views.get_error_log_content),
 ]

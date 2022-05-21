@@ -7,9 +7,10 @@ from django.http import HttpRequest
 from elasticsearch import Elasticsearch
 from crawler_studio_be.settings import ES_SERVER, ES_LOG_INDEX
 from app_settings.models import LogServer
-from app_scrapyd.models import HourlyErrLogRate
+from app_scrapyd.models import HourlyErrLogRate, ErrorLog
+from app_scrapyd.ser import ErrorLogSer
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 
 def search(request):
     """
@@ -333,3 +334,10 @@ def error_log_group_from_sql(request):
         'code': 0,
         'data': data,
     })
+
+
+@api_view(['GET'])
+def get_error_log_content(request):
+    data = ErrorLog.objects.order_by('-record_time')[:50]
+    ser = ErrorLogSer(data, many=True)
+    return Response(ser.data)

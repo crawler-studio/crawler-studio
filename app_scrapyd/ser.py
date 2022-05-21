@@ -47,4 +47,4 @@ class ErrorLogSer(serializers.ModelSerializer):
 
     class Meta:
         model = ErrorLog
-        fields = '__all__'
+        exclude = ['create_time', 'update_time']
