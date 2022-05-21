@@ -12,6 +12,7 @@ from app_scrapyd.ser import ErrorLogSer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+
 def search(request):
     """
     搜索日志

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
-from environs import Env
+from . import env
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'exwi2z^6iwbb4ndijt2b+3d9x*zu2q47p*gz#62=5j9&u=0i**'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv('ENV', 'dev') == 'dev' else False
+DEBUG = True # if os.getenv('ENV', 'dev') == 'dev' else False
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', '124.222.86.71']
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -82,8 +82,6 @@ WSGI_APPLICATION = 'crawler_studio_be.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-env = Env()
-env.read_env(f'{os.path.dirname(os.path.dirname(__file__))}/.env.{os.getenv("ENV", "dev")}')
 
 
 DATABASES = {
@@ -140,25 +138,14 @@ USE_L10N = True
 
 STATIC_URL = '/static/'
 
-import os
-import redis
-from environs import Env
-env = Env()
-
 ES_SERVER = '10.0.6.197:9200'
 ES_LOG_INDEX = 'ocean_log'
-
-assert os.getenv("ENV", "dev") in ('dev', 'test', 'prod')
-env.read_env(f'.env.{os.getenv("ENV", "dev")}')
 
 
 RABBITMQ_HOST = env.str('RABBITMQ_HOST')
 RABBITMQ_PORT = env.int('RABBITMQ_PORT')
 RABBITMQ_USER = env.str('RABBITMQ_USER')
 RABBITMQ_PASSWORD = env.str('RABBITMQ_PASSWORD')
-
-UPLOAD_BUNDLE_KEY_QUEUE_NAME = 'upload_bundle_key'
-UPLOAD_BUNDLE_KEY_EXCHANGE = 'fanout_bundle_key'
 
 
 REST_FRAMEWORK = {

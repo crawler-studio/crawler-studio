@@ -7,15 +7,12 @@
 import datetime
 import logging
 import time
-import requests
 from elasticsearch import Elasticsearch
 from utils.message_transmit import send_ding_message, send_mail
-from utils.rabbitmq import RabbitMQ2
 from app_scrapyd.models import SpiderStats, HourlyErrLogRate
 from app_schedule.models import MonitorRules
 
 logger = logging.getLogger(__name__)
-mq = RabbitMQ2()
 
 
 def log_alive(**kwargs):
@@ -112,14 +109,6 @@ def log_alive(**kwargs):
         seconds = int(time.time() - timestamp // 1000)
         if seconds > int(alive_limit):
             alert(seconds)
-
-
-def rabbitmq_task(**kwargs):
-    queue = kwargs['queue']
-    queue_params = kwargs['queue_params']
-    queue_params['sendTime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    mq.send(queue, queue_params)
-    logger.info(f'发送定时任务成功，队列 {queue}, 参数 {queue_params}')
 
 
 def spider_monitor_task(**kwargs):
