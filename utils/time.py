@@ -24,11 +24,12 @@ def seconds_to_dhms_zh(seconds):
     minutes = (seconds // 60) % 60
     seconds %= 60
     if days > 0:
-        return _days(days) + _hours(hours) + _minutes(minutes) + _seconds(seconds)
+        return _days(days) + _hours(hours).strip(', ')
     if hours > 0:
-        return _hours(hours) + _minutes(minutes) + _seconds(seconds)
+        return _hours(hours) + _minutes(minutes).strip(', ')
     if minutes > 0:
         return _minutes(minutes) + _seconds(seconds)
+
     return _seconds(seconds)
 
 
