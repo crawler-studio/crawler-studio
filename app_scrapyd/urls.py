@@ -9,7 +9,7 @@ from app_scrapyd import views
 from django.urls import path
 
 urlpatterns = [
-    url('spider_finished/', views.list_finished),
+    url('spiderFinished/', views.FinishTaskCRUD.as_view()),
     url('project_all/', views.project_info),
     url('cancel_spider/', views.cancel_spider),
     url('check_cancel/', views.check_cancel),
