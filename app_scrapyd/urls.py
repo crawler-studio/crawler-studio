@@ -10,9 +10,7 @@ from django.urls import path
 
 urlpatterns = [
     url('spiderFinished/', views.FinishTaskCRUD.as_view()),
-    url('project_all/', views.project_info),
-    url('cancel_spider/', views.cancel_spider),
-    url('check_cancel/', views.check_cancel),
+    # url('check_cancel/', views.check_cancel),
     url('runningTask/', views.RunningTaskCRUD.as_view()),
     url('spiderStartParams/', views.SpiderStartParamsCRUD.as_view()),
     url('spiderStats/', views.SpiderStatsCRUD.as_view()),

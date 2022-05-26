@@ -79,9 +79,6 @@ class RunningTaskCRUD(APIView):
     def __init__(self):
         super(RunningTaskCRUD, self).__init__()
         self.logger = logging.getLogger('RunningTaskCRUD')
-        self.key = f'crawler_studio_be:scrapyd:setting'
-        from rest_framework.test import APIClient
-        self.client = APIClient()
 
     def get(self, request, **kwargs):
         """
@@ -272,68 +269,19 @@ class ErrorLogContentCRUD(APIView):
             logger.error(data.errors)
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-def project_info(request):
-    """
-    获取项目信息
-    test url: http://127.0.0.1:8000/api/v1/scrapyd/project_all/?addr=http://10.0.4.150:6800
-    """
-    addr = request.GET['addr']
-    if addr not in scrapyd_container:
-        scrapyd_container[addr] = ScrapydAPI(target=addr)
-
-    projects = scrapyd_container[addr].list_projects()
-    info = []
-    for project in projects:
-        if project not in ('.DS_Store', 'default'):
-            try:
-                spiders = scrapyd_container[addr].list_spiders(project)
-                item = {
-                    'project': project,
-                    'spider_num': len(spiders),
-                    'spider_list': ', '.join(spiders),
-                    'available': True
-                }
-            except:
-                item = {
-                    'project': project,
-                    'spider_num': 0,
-                    'spider_list': '',
-                    'available': False
-                }
-            info.append(item)
-    return JsonResponse(info, safe=False)
-
-
-def cancel_spider(request):
-    """
-    停止单个爬虫
-    test url: http://127.0.0.1:8000/api/v1/scrapyd/cancel_spider/?addr=http://10.0.4.150:6800&project=twitter&job_id=1087dc6456a611ec9f2d00163e290a0d
-    """
-    addr = request.GET['addr']
-    project = request.GET['project']
-    job_id = request.GET['jobId']
-    if addr not in scrapyd_container:
-        scrapyd_container[addr] = ScrapydAPI(target=addr)
-
-    result = scrapyd_container[addr].cancel(project, job_id)
-    return JsonResponse(result, safe=False)
-
-
-def check_cancel(request):
-    """
-    检查job_id是否在还在运行列表中
-    test url: http://127.0.0.1:8000/api/v1/scrapyd/check_cancel/?addr=http://10.0.4.150:6800&project=twitter&job_id=0fd0e2f45c9911ec9f2d00163e290a0d
-    """
-    addr = request.GET['addr']
-    if addr not in scrapyd_container:
-        scrapyd_container[addr] = ScrapydAPI(target=addr)
-
-    project = request.GET['project']
-    job_id = request.GET['jobId']
-    jobs = scrapyd_container[addr].list_jobs(project)
-    running_jobs = [_['id'] for _ in jobs['running']]
-    if job_id not in running_jobs:
-        return JsonResponse({'status': 0}, safe=False)
-    else:
-        return JsonResponse({'status': 1}, safe=False)
+#
+# def check_cancel(request):
+#     """
+#     检查job_id是否在还在运行列表中
+#     test url: http://127.0.0.1:8000/api/v1/scrapyd/check_cancel/?addr=http://10.0.4.150:6800&project=twitter&job_id=0fd0e2f45c9911ec9f2d00163e290a0d
+#     """
+#     scrapyd = ScrapydAPI(target=addr)
+#
+#     project = request.GET['project']
+#     job_id = request.GET['jobId']
+#     jobs = scrapyd_container[addr].list_jobs(project)
+#     running_jobs = [_['id'] for _ in jobs['running']]
+#     if job_id not in running_jobs:
+#         return JsonResponse({'status': 0}, safe=False)
+#     else:
+#         return JsonResponse({'status': 1}, safe=False)

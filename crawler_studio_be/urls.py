@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
+from rest_framework.authtoken import views
 # from app_schedule.views import TimerScheduler
 
 
@@ -29,4 +30,5 @@ urlpatterns = [
     path('api/v1/logs/', include('app_logs.urls')),
     path('api/v1/dashboard/', include('app_dashboard.urls')),
     path('api/v1/schedule/', include('app_schedule.urls')),
+    path('api/v1/api-token-auth/', views.obtain_auth_token),
 ]
