@@ -6,67 +6,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from dateutil import parser as dt_parser
 from utils.time import seconds_to_dhms_zh
-from .ser import SpiderStatsSer, \
-    SpiderStartParamsSer
-from .models import SpiderStats, \
-     SpiderStartParams
+from .ser import SpiderStatsSer
+from .models import SpiderStats
 
 
 logger = logging.getLogger(__name__)
-
-
-class NewTaskCRUD(APIView):
-
-    def get(self, request, **kwargs):
-        """
-        获取所有项目的所有爬虫及其启动参数，先获取默认参数，再获取此爬虫的参数
-        test url: http://127.0.0.1:8000/api/v1/scrapyd/newTask/?addr=http://10.0.4.150:6800
-        """
-        host = request.query_params['host']
-        scrapyd = ScrapydAPI(target=host)
-        projects = scrapyd.list_projects()
-        info = []
-        default_params = SpiderStartParams.objects.filter(project='__default', spider='__default').first()
-        for project in projects:
-            if project not in ('.DS_Store', 'default'):
-                try:
-                    spiders = scrapyd.list_spiders(project)
-                    for spider in spiders:
-                        spider_params = SpiderStartParams.objects.filter(project=project, spider=spider).first()
-                        if spider_params:
-                            ser = SpiderStartParamsSer(spider_params)
-                            item = ser.data
-                        else:
-                            ser = SpiderStartParamsSer(default_params)
-                            item = ser.data
-                            item.update({
-                                'project': project,
-                                'spider': spider
-                            })
-                        info.append(item)
-                except Exception as e:
-                    logger.error(e)
-        return Response(info, status=status.HTTP_200_OK)
-
-    def post(self, request, **kwargs):
-        """
-        启动爬虫，并且传递设置参数
-        """
-        data = request.data
-        setting = {}
-        if data['run_type'] == 'interval':
-            setting['LOOP_INTERVAL'] = int(data['trigger'])
-        if data['run_type'] == 'crontab':
-            setting['LOOP_CRONTAB'] = data['trigger']
-        setting['CS_ENABLE_MONITOR_RULE'] = data['enable_monitor_rule']
-        setting['CS_ENABLE_SEND_ERR_TEXT'] = data['enable_send_error_log']
-        setting['CS_MONITOR_FREQ'] = int(data['monitor_freq'])
-        setting['CS_ERRLOG_RATE_LIMIT'] = float(data['errlog_rate_limit'])
-        setting['CS_MEMORY_USE_LIMIT'] = int(data['memory_use_limit'])
-        logger.info(f'Start spider, spider settings {setting}')
-        ins = ScrapydAPI(target=data['host'])
-        job_id = ins.schedule(data['project'], data['spider'], settings=setting)
-        return Response(job_id, status=status.HTTP_200_OK)
 
 
 class RunningTaskCRUD(APIView):
@@ -141,31 +85,6 @@ class FinishTaskCRUD(APIView):
         return Response(finished_info)
 
     def post(self, request, **kwargs):
-        pass
-
-
-class SpiderStartParamsCRUD(APIView):
-
-    def get(self, request, **kwargs):
-        project = request.query_params.get('project', '__default')
-        data = SpiderStartParams.objects.filter(project=project).first()
-        ser = SpiderStartParamsSer(data)
-        return Response(ser.data)
-
-    def post(self, request, **kwargs):
-        existed = SpiderStartParams.objects.filter(project=request.data['project'], spider=request.data['spider']).first()
-        params = SpiderStartParamsSer(instance=existed, data=request.data)
-        if params.is_valid():
-            params.save()
-            if existed:
-                return Response(f"update success", status=status.HTTP_200_OK)
-            else:
-                return Response(f"create success", status=status.HTTP_200_OK)
-        else:
-            logger.error(params.errors)
-            return Response(params.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, **kwargs):
         pass
 
 
