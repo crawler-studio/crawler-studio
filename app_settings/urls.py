@@ -2,7 +2,7 @@
 @Description: 
 @Usage: 
 @Author: liuxianglong
-@Date: 2021/12/16 下午12:53
+@Date: 2022/6/16 下午12:53
 """
 from django.conf.urls import url
 from app_settings import views
