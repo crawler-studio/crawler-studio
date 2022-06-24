@@ -2,7 +2,7 @@
 @Description: 
 @Usage: 
 @Author: liuxianglong
-@Date: 2021/12/5 下午4:30
+@Date: 2022/06/15 下午4:30
 """
 from django.conf.urls import url
 from app_scrapyd import views
