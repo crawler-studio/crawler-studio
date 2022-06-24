@@ -1,23 +1,18 @@
 import json
-import re
 import logging
 from scrapyd_api import ScrapydAPI
-from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from app_schedule.models import MonitorRules
 from dateutil import parser as dt_parser
 from utils.time import seconds_to_dhms_zh
-from django.forms.models import model_to_dict
-from .ser import SpiderStatsSer, HourlyErrLogRateSer, DailyErrLogRateSer, ErrorLogSer, \
+from .ser import SpiderStatsSer, \
     SpiderStartParamsSer
-from .models import SpiderStats, HourlyErrLogRate, DailyErrLogRate, ErrorLog, \
+from .models import SpiderStats, \
      SpiderStartParams
 
 
 logger = logging.getLogger(__name__)
-scrapyd_container = dict()
 
 
 class NewTaskCRUD(APIView):
@@ -92,7 +87,6 @@ class RunningTaskCRUD(APIView):
             j = ins.list_jobs(p)
             for running in j['running']:
                 stats = SpiderStats.objects.filter(job_id=running['id']).first()
-                monitor_rule = MonitorRules.objects.filter(spider_job_id=running['id']).first()
                 item = dict()
                 item['project'] = p
                 item['job_id'] = running['id']
@@ -103,9 +97,7 @@ class RunningTaskCRUD(APIView):
                 item['trigger'] = 'Unknown' if stats is None else stats.trigger
                 item['last_run'] = 'Unknown' if stats is None else stats.last_run
                 item['memory_use'] = 0 if stats is None else stats.memory_use
-                item['memory_use_limit'] = 'Unknown' if monitor_rule is None else monitor_rule.memory_use_limit
                 item['log_hourly_error_rate'] = 'Unknown' if stats is None else stats.log_hourly_error_rate
-                item['log_hourly_error_limit'] = 'Unknown' if monitor_rule is None else monitor_rule.errlog_rate_limit
                 running_info.append(item)
         running_info.sort(key=lambda _: _['start_time'], reverse=True)
         return Response(running_info)
@@ -217,71 +209,3 @@ class SpiderStatsCRUD(APIView):
 
     def delete(self, request, **kwargs):
         pass
-
-
-class ErrorLogRateCRUD(APIView):
-
-    def get(self, request, **kwargs):
-        pass
-
-    def post(self, request, **kwargs):
-        if request.data.get('log_hour') is not None:        # hourly api
-            job_id = request.data['job_id']
-            log_date = request.data['log_date']
-            log_hour = request.data['log_hour']
-            existed = HourlyErrLogRate.objects.filter(job_id=job_id, log_date=log_date, log_hour=log_hour).first()
-            data = HourlyErrLogRateSer(instance=existed, data=request.data)
-            if data.is_valid():
-                data.save()
-                if existed:
-                    return Response(f'update success {job_id} {log_date}-{log_hour}', status=status.HTTP_200_OK)
-                else:
-                    return Response(f'create success {job_id} {log_date}-{log_hour}', status=status.HTTP_200_OK)
-            else:
-                logger.error(data.errors)
-                return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            job_id = request.data['job_id']             # daily api
-            log_date = request.data['log_date']
-            existed = DailyErrLogRate.objects.filter(job_id=job_id, log_date=log_date).first()
-            data = DailyErrLogRateSer(instance=existed, data=request.data)
-            if data.is_valid():
-                data.save()
-                if existed:
-                    return Response(f'update success {job_id} {log_date}', status=status.HTTP_200_OK)
-                else:
-                    return Response(f'create success {job_id} {log_date}', status=status.HTTP_200_OK)
-            else:
-                logger.error(data.errors)
-                return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)                # daily api
-
-
-class ErrorLogContentCRUD(APIView):
-    def get(self, request, **kwargs):
-        pass
-
-    def post(self, request, **kwargs):
-        data = ErrorLogSer(data=request.data)
-        if data.is_valid():
-            data.save()
-            return Response(f'create success', status=status.HTTP_200_OK)
-        else:
-            logger.error(data.errors)
-            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#
-# def check_cancel(request):
-#     """
-#     检查job_id是否在还在运行列表中
-#     test url: http://127.0.0.1:8000/api/v1/scrapyd/check_cancel/?addr=http://10.0.4.150:6800&project=twitter&job_id=0fd0e2f45c9911ec9f2d00163e290a0d
-#     """
-#     scrapyd = ScrapydAPI(target=addr)
-#
-#     project = request.GET['project']
-#     job_id = request.GET['jobId']
-#     jobs = scrapyd_container[addr].list_jobs(project)
-#     running_jobs = [_['id'] for _ in jobs['running']]
-#     if job_id not in running_jobs:
-#         return JsonResponse({'status': 0}, safe=False)
-#     else:
-#         return JsonResponse({'status': 1}, safe=False)

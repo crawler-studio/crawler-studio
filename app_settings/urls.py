@@ -10,5 +10,4 @@ from app_settings import views
 urlpatterns = [
     url('scrapydserver/', views.ScrapydServerAddr.as_view()),
     url('logserver/', views.LogServerAddr.as_view()),
-    url('gitlab/', views.Gitlab.as_view())
 ]

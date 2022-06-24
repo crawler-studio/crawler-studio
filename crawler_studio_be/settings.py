@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'exwi2z^6iwbb4ndijt2b+3d9x*zu2q47p*gz#62=5j9&u=0i**'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # if os.getenv('ENV', 'dev') == 'dev' else False
+DEBUG = True if os.getenv('ENV', 'dev') == 'dev' else False
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', '124.222.86.71']
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -34,15 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_apscheduler',
-    'app_env',
-    'app_schedule',
     'app_scrapyd',
-    'app_deploy',
-    'app_docs',
-    'app_logs',
     'app_settings',
-    'app_dashboard',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -137,15 +130,6 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-ES_SERVER = '10.0.6.197:9200'
-ES_LOG_INDEX = 'ocean_log'
-
-
-RABBITMQ_HOST = env.str('RABBITMQ_HOST')
-RABBITMQ_PORT = env.int('RABBITMQ_PORT')
-RABBITMQ_USER = env.str('RABBITMQ_USER')
-RABBITMQ_PASSWORD = env.str('RABBITMQ_PASSWORD')
 
 
 REST_FRAMEWORK = {

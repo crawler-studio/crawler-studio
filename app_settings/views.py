@@ -72,31 +72,3 @@ class LogServerAddr(View):
         LogServer.objects.filter(is_default=1).update(is_default=0)
         LogServer.objects.filter(addr=data['addr']).update(is_default=1)
         return JsonResponse({'code': 0})
-
-
-class Gitlab(View):
-    def __init__(self):
-        super(Gitlab, self).__init__()
-        self.client = gitlab.Gitlab('https://git.aigauss.com', private_token='KEFT6pz8CNMZkYfo68Rs')
-        self.client.auth()
-
-    def get(self, request):
-        """
-        获取gitlab上的提交信息
-        test url: http://localhost:8000/api/v1/settings/gitlab
-        """
-        project = self.client.projects.get('xianglong.liu/platform_data')
-        commits = project.commits.list(ref_name='master', page=0, per_page=10)
-        result = list()
-
-        for c in commits:
-            d = dfparser.parse(c.created_at)
-            item = {
-                'commit_id': c.id,
-                'committer': c.committer_name,
-                'created_at': d.astimezone(datetime.timezone(datetime.timedelta(hours=+8))).strftime('%Y-%m-%d %H:%M:%S'),
-                'message': c.message.strip()
-            }
-            print(item)
-            result.append(item)
-        return JsonResponse(result, safe=False)

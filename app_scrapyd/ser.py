@@ -2,10 +2,9 @@
 @Description: 
 @Usage: 
 @Author: liuxianglong
-@Date: 2022/5/13 下午2:24
+@Date: 2022/6/13 下午2:24
 """
-from app_scrapyd.models import SpiderStats, DailyErrLogRate, HourlyErrLogRate, ErrorLog, \
-    SpiderStartParams
+from app_scrapyd.models import SpiderStats, SpiderStartParams
 from rest_framework import serializers
 from crawler_studio_be.custom_field import Str2IntSerializerField, Str2ListSerializerField, Str2DictSerializerField
 
@@ -28,23 +27,3 @@ class SpiderStartParamsSer(serializers.ModelSerializer):
         model = SpiderStartParams
         exclude = ['create_time', 'update_time']
 
-
-class DailyErrLogRateSer(serializers.ModelSerializer):
-
-    class Meta:
-        model = DailyErrLogRate
-        fields = '__all__'
-
-
-class HourlyErrLogRateSer(serializers.ModelSerializer):
-
-    class Meta:
-        model = HourlyErrLogRate
-        fields = '__all__'
-
-
-class ErrorLogSer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ErrorLog
-        exclude = ['create_time', 'update_time']
