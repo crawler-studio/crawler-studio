@@ -77,7 +77,7 @@ class FinishTaskCRUD(APIView):
                 item['end_time'] = finished['end_time'].split('.')[0]
                 start = dt_parser.parse(item['start_time'])
                 end = dt_parser.parse(item['end_time'])
-                item['elapsed_time'] = seconds_to_dhms_zh((end-start).seconds)
+                item['elapsed_time'] = seconds_to_dhms_zh((end-start).days*86400+(end-start).seconds)
                 finished_info.append(item)
         finished_info.sort(key=lambda _: _['end_time'], reverse=True)
         return Response(finished_info)
