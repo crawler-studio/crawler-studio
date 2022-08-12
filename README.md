@@ -10,8 +10,22 @@
 ## 安装
 ```pip install crawler-studio```
 
-## 运行
-```python manage.py runserver 0.0.0.0:8000```
+## 运行 WEB UI
+```
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8000
+```
 
 ## 使用说明
-待完善
+在scrapy的settings.py文件中开启下列扩展，其中
+- CS_BACKEND    表示WEBUI运行地址
+- CS_API_TOKEN  表示WEBUI访问token
+
+```python
+CS_BACKEND = 'http://localhost:8000'
+CS_API_TOKEN = '901f2e74fb57e12536dea98fd199aff0eddf0190'
+EXTENSIONS = {
+    'crawler_studio.ScrapyMonitor': 500,
+}
+```
+
