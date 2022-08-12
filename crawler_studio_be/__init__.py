@@ -9,6 +9,5 @@ logging.getLogger('pika').setLevel('ERROR')
 
 
 env = Env()
-assert os.getenv("ENV", "dev") in ('dev', 'test', 'prod')
-env.read_env(f'.env.{os.getenv("ENV", "dev")}')
+env.read_env(f'.env')
 
