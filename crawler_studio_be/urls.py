@@ -17,6 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
 from rest_framework.authtoken import views
+from django.views import static
+from django.conf import settings
+from django.conf.urls import url
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
@@ -25,4 +29,6 @@ urlpatterns = [
     path('api/v1/settings/', include('app_settings.urls')),
     path('api/v1/user/', include('app_user.urls')),
     path('api/v1/api-token-auth/', views.obtain_auth_token),
+    path(r'', TemplateView.as_view(template_name="index.html")),
+    url(r'^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static'),
 ]

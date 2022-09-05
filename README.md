@@ -1,5 +1,5 @@
 # crawler-studio
-## 一款在线爬虫监控软件
+## 一款在线监控Scrapy爬虫的软件
 
 - 监控爬虫运行参数
 - 监控爬虫日志错误率
@@ -7,16 +7,19 @@
 - 分布式爬虫管理
 - 爬虫文档管理
 
-## 安装
+
+## 使用说明
+
+### 1. 安装
 ```pip install crawler-studio```
 
-## 运行 WEB UI
+### 2. 运行 WEB UI
 ```
 python manage.py migrate
 python manage.py runserver 0.0.0.0:8000
 ```
 
-## 使用说明
+### 3. 开启Scrapy爬虫扩展
 在scrapy的settings.py文件中开启下列扩展，其中
 - CS_BACKEND    表示WEBUI运行地址
 - CS_API_TOKEN  表示WEBUI访问token
@@ -29,3 +32,5 @@ EXTENSIONS = {
 }
 ```
 
+
+## 开发说明

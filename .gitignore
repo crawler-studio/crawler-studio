@@ -5,3 +5,6 @@ __pycache__
 .DS_Store
 db.sqlite3
 logs/
+
+dist/
+static/

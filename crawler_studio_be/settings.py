@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'exwi2z^6iwbb4ndijt2b+3d9x*zu2q47p*gz#62=5j9&u=0i**'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv('ENV', 'dev') == 'dev' else False
+DEBUG = False
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', '10.0.4.150', '*']
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -58,7 +58,8 @@ ROOT_URLCONF = 'crawler_studio_be.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+                 os.path.join(BASE_DIR, 'dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,7 +131,6 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
 
 
 REST_FRAMEWORK = {
@@ -236,3 +236,12 @@ LOGGING = {
         }
     },
 }
+
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "dist/static"),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")

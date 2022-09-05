@@ -52,9 +52,6 @@ class SpiderStats(BaseInfo):
         d['project'] = self.project
         d['spider'] = self.spider
         d['job_id'] = self.job_id
-        d['run_type'] = new_stats.get('loop_type')
-        d['last_run'] = new_stats.get('loop_last_run')
-        d['trigger'] = new_stats.get('loop_trigger')
         d['record_time'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         d['log_debug_count'] = new_stats.get('log_count/DEBUG', 0)
