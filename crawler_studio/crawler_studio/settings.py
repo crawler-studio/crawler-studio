@@ -158,7 +158,7 @@ REST_FRAMEWORK = {
 
 
 BASE_LOG_DIR = os.path.join(BASE_DIR, "logs")
-print(BASE_LOG_DIR)
+
 LOGGING = {
     'version': 1,  # 保留字
     'disable_existing_loggers': False,  # 禁用已经存在的logger实例
@@ -240,7 +240,7 @@ LOGGING = {
 
 
 STATIC_URL = '/static/'
-print(BASE_DIR)
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "dist/static"),
 ]

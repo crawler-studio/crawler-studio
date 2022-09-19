@@ -3,11 +3,10 @@
 import os
 import sys
 
-print(os.getcwd(), 'getcwd')#获得当前目录
-print(os.path.abspath('.'), 'abspath')#获得当前工作目录
-print(sys.path)
-sys.path.remove('/Users/arron/code/project/crawler_studio/crawler_studio_be/crawler_studio')
-sys.path.remove('/Users/arron/code/project/crawler_studio/crawler_studio_be/crawler_studio')
+for path in sys.path:
+    if path.endswith('crawler_studio'):
+        sys.path.remove(path)
+
 
 def manage():
     """Run administrative tasks."""
@@ -20,7 +19,6 @@ def manage():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
-    print(sys.argv)
     execute_from_command_line(sys.argv)
 
 
