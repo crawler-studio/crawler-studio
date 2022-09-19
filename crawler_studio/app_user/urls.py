@@ -1,5 +1,5 @@
 from django.urls import path
-from app_user import views
+from crawler_studio.app_user import views
 
 urlpatterns = [
     path('register/', views.Register.as_view()),

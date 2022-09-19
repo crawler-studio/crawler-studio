@@ -5,7 +5,7 @@
 @Date: 2022/6/16 下午12:53
 """
 from django.conf.urls import url
-from app_settings import views
+from crawler_studio.app_settings import views
 
 urlpatterns = [
     url('scrapydserver/', views.ScrapydServerAddr.as_view()),

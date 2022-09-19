@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crawler_studio_be.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crawler_studio.crawler_studio.settings')
 
 application = get_asgi_application()

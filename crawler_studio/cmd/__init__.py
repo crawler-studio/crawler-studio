@@ -4,8 +4,6 @@
 @Author: liuxianglong
 @Date: 2022/9/5 下午5:34
 """
-import sys
-import argparse
 
 
 def cmd():
@@ -13,7 +11,7 @@ def cmd():
     run from cmd
     :return:
     """
-    from ..manage import manage
+    from crawler_studio.manage import manage
     manage()
 
 

@@ -4,7 +4,7 @@
 @Author: liuxianglong
 @Date: 2022/6/13 下午2:24
 """
-from app_scrapyd.models import SpiderStats
+from crawler_studio.app_scrapyd.models import SpiderStats
 from rest_framework import serializers
 
 

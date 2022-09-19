@@ -2,7 +2,7 @@
 from django import forms
 from django.forms import widgets
 from django.forms import fields
-from app_user import models
+from crawler_studio.app_user import models
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 

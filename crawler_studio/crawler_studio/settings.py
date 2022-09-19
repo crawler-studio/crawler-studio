@@ -34,9 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app_scrapyd',
-    'app_settings',
-    'app_user',
+    'crawler_studio.app_scrapyd',
+    'crawler_studio.app_settings',
+    'crawler_studio.app_user',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'crawler_studio_be.urls'
+ROOT_URLCONF = 'crawler_studio.crawler_studio.urls'
 
 TEMPLATES = [
     {
@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'crawler_studio_be.wsgi.application'
+WSGI_APPLICATION = 'crawler_studio.crawler_studio.wsgi.application'
 
 
 # Database
@@ -158,6 +158,7 @@ REST_FRAMEWORK = {
 
 
 BASE_LOG_DIR = os.path.join(BASE_DIR, "logs")
+print(BASE_LOG_DIR)
 LOGGING = {
     'version': 1,  # 保留字
     'disable_existing_loggers': False,  # 禁用已经存在的logger实例
@@ -239,7 +240,7 @@ LOGGING = {
 
 
 STATIC_URL = '/static/'
-
+print(BASE_DIR)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "dist/static"),
 ]

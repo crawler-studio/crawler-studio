@@ -9,5 +9,5 @@ logging.getLogger('pika').setLevel('ERROR')
 
 
 env = Env()
-env.read_env(f'.env')
+env.read_env(f'crawler_studio/config')
 

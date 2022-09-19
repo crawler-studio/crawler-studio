@@ -6,7 +6,7 @@ from dateutil import parser as dfparser
 import gitlab
 from django.views.generic import View
 from django.http import HttpResponse, JsonResponse
-from app_settings.models import ScrapydServer, LogServer
+from crawler_studio.app_settings.models import ScrapydServer, LogServer
 from django.forms.models import model_to_dict
 
 

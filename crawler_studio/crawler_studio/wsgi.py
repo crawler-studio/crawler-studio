@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crawler_studio_be.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crawler_studio.crawler_studio.settings')
 
 application = get_wsgi_application()

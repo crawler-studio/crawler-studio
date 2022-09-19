@@ -5,7 +5,7 @@
 @Date: 2022/06/15 下午4:30
 """
 from django.conf.urls import url
-from app_scrapyd import views
+from crawler_studio.app_scrapyd import views
 from django.urls import path
 
 urlpatterns = [
