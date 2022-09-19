@@ -1,9 +1,6 @@
 from django.shortcuts import render
 
 # Create your views here.
-import datetime
-from dateutil import parser as dfparser
-import gitlab
 from django.views.generic import View
 from django.http import HttpResponse, JsonResponse
 from crawler_studio.app_settings.models import ScrapydServer, LogServer
