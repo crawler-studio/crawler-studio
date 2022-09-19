@@ -13,14 +13,24 @@
 ### 1. 安装
 ```pip install crawler-studio```
 
-### 2. 运行 WEB UI
+### 2. 生成相关表文件
 ```
 cs makemigrations
 cs migrate
-cs runserver
 ```
 
-### 3. 开启Scrapy爬虫扩展
+### 3. 注册管理员
+```
+cs createsuperuser          //注册
+cs changepassword [username]       //修改密码
+```
+
+### 4. 运行WEB页面
+```
+cs runserver [ip]:[port]
+```
+
+### 5. 开启Scrapy爬虫扩展
 在scrapy的settings.py文件中开启下列扩展，其中
 - CS_BACKEND    表示WEBUI运行地址
 - CS_API_TOKEN  表示WEBUI访问token
