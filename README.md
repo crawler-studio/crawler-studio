@@ -15,8 +15,9 @@
 
 ### 2. 运行 WEB UI
 ```
-python manage.py migrate
-python manage.py runserver 0.0.0.0:8000
+cs makemigrations
+cs migrate
+cs runserver
 ```
 
 ### 3. 开启Scrapy爬虫扩展
