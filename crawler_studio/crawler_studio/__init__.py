@@ -7,7 +7,3 @@ pymysql.install_as_MySQLdb()
 
 logging.getLogger('pika').setLevel('ERROR')
 
-
-env = Env()
-env.read_env(f'crawler_studio/config')
-

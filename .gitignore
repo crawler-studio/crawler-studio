@@ -6,3 +6,6 @@ __pycache__
 db.sqlite3
 logs/
 setup.py
+build/
+dist/
+crawler_studio.egg-info/
