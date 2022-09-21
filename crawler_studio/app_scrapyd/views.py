@@ -23,7 +23,7 @@ class RunningTaskCRUD(APIView):
         """
         test url: http://127.0.0.1:8000/api/v1/scrapyd/runningTask/?addr=http://10.0.4.150:6800
         """
-        addr = request.GET['addr']
+        addr = request.GET['host']
         ins = ScrapydAPI(target=addr)
 
         running_info = list()
@@ -41,7 +41,14 @@ class RunningTaskCRUD(APIView):
                 item['log_hourly_error_rate'] = 'Unknown' if stats is None else stats.log_hourly_error_rate
                 running_info.append(item)
         running_info.sort(key=lambda _: _['start_time'], reverse=True)
-        return Response(running_info)
+        res = {
+            'code': 200,
+            'data': {
+                'data': running_info
+            },
+            'message': 'ok'
+        }
+        return Response(res)
 
     def post(self, request, **kwargs):
         pass
@@ -53,7 +60,13 @@ class RunningTaskCRUD(APIView):
             job_id = task['job_id']
             ins = ScrapydAPI(target=addr)
             ins.cancel(project, job_id)
-        return Response(f'删除{len(request.data["checked_data"])}个任务成功')
+
+        res = {
+            'code': 200,
+            'data': None,
+            'message': f'删除{len(request.data["checked_data"])}个任务成功'
+        }
+        return Response(res)
 
 
 class FinishTaskCRUD(APIView):
@@ -79,7 +92,14 @@ class FinishTaskCRUD(APIView):
                 item['elapsed_time'] = seconds_to_dhms_zh((end-start).days*86400+(end-start).seconds)
                 finished_info.append(item)
         finished_info.sort(key=lambda _: _['end_time'], reverse=True)
-        return Response(finished_info)
+        res = {
+            'code': 200,
+            'data': {
+                'data': finished_info
+            },
+            'message': 'ok'
+        }
+        return Response(res)
 
     def post(self, request, **kwargs):
         pass
@@ -96,12 +116,25 @@ class SpiderStatsCRUD(APIView):
         """
         job_id = request.query_params['jobId']
         existed = SpiderStats.objects.filter(job_id=job_id).first()
+
         if existed:
             d = json.loads(existed.stats)
             d = [{'key': k, 'value': v} for k, v in d.items()]
-            return Response(d, status=status.HTTP_200_OK)
+            res = {
+                'code': 200,
+                'data': {
+                    'data': d
+                },
+                'message': 'ok'
+            }
+            return Response(res)
         else:
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            res = {
+                'code': 204,
+                'data': None,
+                'message': 'jobId not exist {}'.format(job_id)
+            }
+            return Response(res)
 
     def post(self, request, **kwargs):
         """

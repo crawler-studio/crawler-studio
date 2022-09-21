@@ -21,7 +21,7 @@ cs migrate
 
 ### 3. 注册管理员
 ```
-cs createsuperuser          //注册
+cs createsuperuser                 //注册
 cs changepassword [username]       //修改密码
 ```
 

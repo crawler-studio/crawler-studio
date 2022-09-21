@@ -16,26 +16,58 @@ class ScrapydServerAddr(APIView):
     def get(self, request):
         data = ScrapydServer.objects.all()
         ser = ScrapydServerSer(data, many=True)
-        return Response(ser.data)
+        res = {
+            'code': 200,
+            'data': {
+                'data': ser.data
+            },
+            'message': 'ok'
+        }
+        return Response(res)
 
     def post(self, request):
         data = eval(request.body.decode())
         obj, created = ScrapydServer.objects.get_or_create(addr=data['addr'], defaults=data)
         if created:
-            return Response({'code': 0, 'msg': '添加scrapyd服务器成功'})
+            res = {
+                'code': 200,
+                'data': None,
+                'message': '添加scrapyd服务器成功'
+            }
+            return Response(res)
         else:
-            return Response({'code': 0, 'msg': '服务器已存在'})
+            res = {
+                'code': 300,
+                'data': None,
+                'message': '服务器已存在'
+            }
+            return Response(res)
 
     def delete(self, request):
         data = eval(request.body.decode())
         result = ScrapydServer.objects.filter(addr=data['addr']).delete()
         if result[0] == 1:
-            return Response({'code': 0, 'msg': '删除成功'})
+            res = {
+                'code': 200,
+                'data': None,
+                'message': '删除成功'
+            }
+            return Response(res)
         else:
-            return Response({'code': -1, 'msg': f'数据库中没有服务器 {data["addr"]}'})
+            res = {
+                'code': 400,
+                'data': None,
+                'message': f'数据库中没有服务器 {data["addr"]}'
+            }
+            return Response(res)
 
     def put(self, request):
         data = eval(request.body.decode())
         ScrapydServer.objects.filter(is_default=1).update(is_default=0)
         ScrapydServer.objects.filter(addr=data['addr']).update(is_default=1)
-        return Response({'code': 0})
+        res = {
+            'code': 200,
+            'data': None,
+            'message': '修改默认服务器成功'
+        }
+        return Response(res)

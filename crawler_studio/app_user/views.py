@@ -38,12 +38,19 @@ class Login(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = AuthTokenSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'status': True,
-            'token': token.key,
-            'user_id': user.pk,
-            'user_name': user.username,
-        })
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.validated_data['user']
+            token, created = Token.objects.get_or_create(user=user)
+            res = {
+                'code': 200,
+                'data': {
+                    'data': {
+                        'status': True,
+                        'token': token.key,
+                        'user_id': user.pk,
+                        'user_name': user.username,
+                    }
+                },
+                'message': '登陆成功'
+            }
+            return Response(res)
