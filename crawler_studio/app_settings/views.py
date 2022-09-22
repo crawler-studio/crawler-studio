@@ -26,9 +26,20 @@ class ScrapydServerAddr(APIView):
         return Response(res)
 
     def post(self, request):
-        data = eval(request.body.decode())
-        obj, created = ScrapydServer.objects.get_or_create(addr=data['addr'], defaults=data)
-        if created:
+        addr = request.data['addr']
+
+        existed = ScrapydServer.objects.filter(addr=addr).first()
+        if existed:
+            res = {
+                'code': 300,
+                'data': None,
+                'message': '服务器已存在'
+            }
+            return Response(res)
+
+        server = ScrapydServerSer(instance=existed, data=request.data)
+        if server.is_valid():
+            server.save()
             res = {
                 'code': 200,
                 'data': None,
@@ -36,10 +47,11 @@ class ScrapydServerAddr(APIView):
             }
             return Response(res)
         else:
+            server.save()
             res = {
-                'code': 300,
+                'code': 400,
                 'data': None,
-                'message': '服务器已存在'
+                'message': server.errors
             }
             return Response(res)
 

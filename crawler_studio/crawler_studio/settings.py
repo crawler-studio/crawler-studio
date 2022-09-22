@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crawler_studio.app_logs',
     'crawler_studio.app_scrapyd',
     'crawler_studio.app_settings',
     'crawler_studio.app_user',
