@@ -8,5 +8,6 @@ from django.conf.urls import url
 from crawler_studio.app_logs import views
 
 urlpatterns = [
-    url('error_log_group_from_sql/', views.error_log_group_from_sql),
+    url('errorLogGroupFromSql/', views.error_log_group_from_sql),
+    url('errorLogRate/', views.ErrorLogRateCRUD.as_view()),
 ]

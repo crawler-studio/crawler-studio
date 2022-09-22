@@ -29,6 +29,7 @@ django-apscheduler = "*"
 pika = "*"
 djangorestframework-camel-case = "*"
 tldextract = "*"
+scrapy = "*"
 
 [requires]
 python_version = "3.7"

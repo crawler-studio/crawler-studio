@@ -6,9 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from dateutil import parser as dt_parser
 from crawler_studio.utils.time import seconds_to_dhms_zh
-from .ser import SpiderStatsSer
 from .models import SpiderStats
-
+from .ser import SpiderStatsSer
 
 logger = logging.getLogger(__name__)
 

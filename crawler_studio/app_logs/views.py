@@ -1,10 +1,54 @@
 import re
 import time
+import logging
 import datetime
+from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
-from crawler_studio.app_scrapyd.models import HourlyErrLogRate, ErrorLog
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .models import HourlyErrLogRate, DailyErrLogRate
+from .ser import HourlyErrLogRateSer, DailyErrLogRateSer
+from rest_framework import status
+
+
+class ErrorLogRateCRUD(APIView):
+
+    def __init__(self):
+        super(ErrorLogRateCRUD, self).__init__()
+        self.logger = logging.getLogger('ErrorLogRateCRUD')
+
+    def get(self, request, **kwargs):
+        pass
+
+    def post(self, request, **kwargs):
+        if request.data.get('log_hour') is not None:        # hourly api
+            job_id = request.data['job_id']
+            log_date = request.data['log_date']
+            log_hour = request.data['log_hour']
+            existed = HourlyErrLogRate.objects.filter(job_id=job_id, log_date=log_date, log_hour=log_hour).first()
+            data = HourlyErrLogRateSer(instance=existed, data=request.data)
+            if data.is_valid():
+                data.save()
+                if existed:
+                    return Response(f'update success {job_id} {log_date}-{log_hour}', status=status.HTTP_200_OK)
+                else:
+                    return Response(f'create success {job_id} {log_date}-{log_hour}', status=status.HTTP_200_OK)
+            else:
+                self.logger.error(data.errors)
+                return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            job_id = request.data['job_id']             # daily api
+            log_date = request.data['log_date']
+            existed = DailyErrLogRate.objects.filter(job_id=job_id, log_date=log_date).first()
+            data = DailyErrLogRateSer(instance=existed, data=request.data)
+            if data.is_valid():
+                data.save()
+                if existed:
+                    return Response(f'update success {job_id} {log_date}', status=status.HTTP_200_OK)
+                else:
+                    return Response(f'create success {job_id} {log_date}', status=status.HTTP_200_OK)
+            else:
+                self.logger.error(data.errors)
+                return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)                # daily api
 
 
 def error_log_group_from_sql(request):
