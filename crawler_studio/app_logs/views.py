@@ -60,7 +60,7 @@ def error_log_group_from_sql(request):
         log_date,
         sum( log_error_count ) as err_count
     FROM
-        app_scrapyd_hourlyerrlograte 
+        app_logs_hourlyerrlograte 
     WHERE
         log_date = CURDATE()
     GROUP BY
