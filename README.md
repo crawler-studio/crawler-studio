@@ -11,7 +11,10 @@
 ## 使用说明
 
 ### 1. 安装
-```pip install crawler-studio```
+```
+pip install crawler_studio
+pip install cs_sender
+```
 
 ### 2. 生成相关表文件
 ```
@@ -39,9 +42,6 @@ cs runserver [ip]:[port]
 CS_BACKEND = 'http://localhost:8000'
 CS_API_TOKEN = '901f2e74fb57e12536dea98fd199aff0eddf0190'
 EXTENSIONS = {
-    'crawler_studio.ScrapyMonitor': 500,
+    'cs_sender.ScrapyMonitor': 500,
 }
 ```
-
-
-## 开发说明
