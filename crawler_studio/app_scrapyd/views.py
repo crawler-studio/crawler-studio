@@ -91,14 +91,13 @@ class FinishTaskCRUD(APIView):
                 item['elapsed_time'] = seconds_to_dhms_zh((end-start).days*86400+(end-start).seconds)
                 finished_info.append(item)
         finished_info.sort(key=lambda _: _['end_time'], reverse=True)
-        res = {
+        return Response({
             'code': 200,
             'data': {
                 'data': finished_info
             },
             'message': 'ok'
-        }
-        return Response(res)
+        })
 
     def post(self, request, **kwargs):
         pass
@@ -119,21 +118,19 @@ class SpiderStatsCRUD(APIView):
         if existed:
             d = json.loads(existed.stats)
             d = [{'key': k, 'value': v} for k, v in d.items()]
-            res = {
+            return Response({
                 'code': 200,
                 'data': {
                     'data': d
                 },
                 'message': 'ok'
-            }
-            return Response(res)
+            })
         else:
-            res = {
+            return Response({
                 'code': 204,
                 'data': None,
                 'message': 'jobId not exist {}'.format(job_id)
-            }
-            return Response(res)
+            })
 
     def post(self, request, **kwargs):
         """

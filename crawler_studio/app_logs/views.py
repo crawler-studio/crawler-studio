@@ -7,7 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
 from .models import HourlyErrLogRate, DailyErrLogRate, ErrorLog
 from .ser import HourlyErrLogRateSer, DailyErrLogRateSer, ErrorLogSer
-from rest_framework import status
+from rest_framework import status, pagination
 
 
 class ErrorLogRateCRUD(APIView):
@@ -52,21 +52,43 @@ class ErrorLogRateCRUD(APIView):
 
 
 class ErrorLogContentCRUD(APIView):
+
+    class PageNumberPagination(pagination.PageNumberPagination):
+        """查第n页，每页显示n条数据"""
+        page_size = 50  # 指定每页显示多少条数据
+        page_size_query_param = 'pageSize'
+        page_query_param = 'page'
+        max_page_size = None
+
     def __init__(self):
         super(ErrorLogContentCRUD, self).__init__()
         self.logger = logging.getLogger('ErrorLogContentCRUD')
 
     def get(self, request, **kwargs):
-        data = ErrorLog.objects.order_by('-record_time')[:50]
-        ser = ErrorLogSer(data, many=True)
-        res = {
+        queryset = ErrorLog.objects.filter(
+            project__icontains=request.query_params['project'],
+            spider__contains=request.query_params['spider'],
+            job_id__icontains=request.query_params['jobId'],
+            content__icontains=request.query_params['content']
+        ).order_by('-record_time')
+        page_obj = self.PageNumberPagination()
+        page_data = page_obj.paginate_queryset(queryset, request)
+        ser = ErrorLogSer(page_data, many=True)
+
+        page_size = page_obj.get_page_size(request)
+        paginator = page_obj.django_paginator_class(queryset, page_size)
+        page_number = page_obj.get_page_number(request, paginator)
+
+        return Response({
             'code': 200,
             'data': {
-                'data': ser.data
+                'data': ser.data,
+                'total': queryset.count(),
+                'page': int(page_number),
+                'pageSize': page_size
             },
             'message': 'ok'
-        }
-        return Response(res)
+        })
 
     def post(self, request, **kwargs):
         data = ErrorLogSer(data=request.data, many=True)
