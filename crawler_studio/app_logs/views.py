@@ -5,7 +5,7 @@ import datetime
 from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
-from .models import HourlyErrLogRate, DailyErrLogRate
+from .models import HourlyErrLogRate, DailyErrLogRate, ErrorLog
 from .ser import HourlyErrLogRateSer, DailyErrLogRateSer, ErrorLogSer
 from rest_framework import status
 
@@ -57,7 +57,16 @@ class ErrorLogContentCRUD(APIView):
         self.logger = logging.getLogger('ErrorLogContentCRUD')
 
     def get(self, request, **kwargs):
-        pass
+        data = ErrorLog.objects.order_by('-record_time')[:50]
+        ser = ErrorLogSer(data, many=True)
+        res = {
+            'code': 200,
+            'data': {
+                'data': ser.data
+            },
+            'message': 'ok'
+        }
+        return Response(res)
 
     def post(self, request, **kwargs):
         data = ErrorLogSer(data=request.data, many=True)
