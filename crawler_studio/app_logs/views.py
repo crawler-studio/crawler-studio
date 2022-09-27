@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
 from .models import HourlyErrLogRate, DailyErrLogRate
-from .ser import HourlyErrLogRateSer, DailyErrLogRateSer
+from .ser import HourlyErrLogRateSer, DailyErrLogRateSer, ErrorLogSer
 from rest_framework import status
 
 
@@ -49,6 +49,24 @@ class ErrorLogRateCRUD(APIView):
             else:
                 self.logger.error(data.errors)
                 return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)                # daily api
+
+
+class ErrorLogContentCRUD(APIView):
+    def __init__(self):
+        super(ErrorLogContentCRUD, self).__init__()
+        self.logger = logging.getLogger('ErrorLogContentCRUD')
+
+    def get(self, request, **kwargs):
+        pass
+
+    def post(self, request, **kwargs):
+        data = ErrorLogSer(data=request.data, many=True)
+        if data.is_valid():
+            data.save()
+            return Response(f'create success', status=status.HTTP_200_OK)
+        else:
+            self.logger.error(data.errors)
+            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def error_log_group_from_sql(request):
