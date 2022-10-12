@@ -11,4 +11,5 @@ urlpatterns = [
     url('errorLogGroupFromSql/', views.error_log_group_from_sql),
     url('errorLogRate/', views.ErrorLogRateCRUD.as_view()),
     url('errorLogContent/', views.ErrorLogContentCRUD.as_view()),
+    url('hostErrorLogGroupFromSql/', views.host_error_log_group_from_sql),
 ]

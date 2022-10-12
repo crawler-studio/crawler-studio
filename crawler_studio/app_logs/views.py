@@ -65,11 +65,29 @@ class ErrorLogContentCRUD(APIView):
         self.logger = logging.getLogger('ErrorLogContentCRUD')
 
     def get(self, request, **kwargs):
+        date = request.query_params['date']
+        today = datetime.datetime.now().date()
+        weekday = datetime.datetime.now().weekday()
+        tomorrow = today + datetime.timedelta(1)
+        yestoday = today - datetime.timedelta(1)
+        before_yestoday = today - datetime.timedelta(2)
+        week_start = today - datetime.timedelta(days=weekday)
+        if date == 'today':
+            date_range = [today, tomorrow]
+        elif date == 'yestoday':
+            date_range = [yestoday, today]
+        elif date == 'before_yestoday':
+            date_range = [before_yestoday, yestoday]
+        else:
+            date_range = [week_start, tomorrow]
+
         queryset = ErrorLog.objects.filter(
+            host=request.query_params['host'],
             project__icontains=request.query_params['project'],
             spider__contains=request.query_params['spider'],
             job_id__icontains=request.query_params['jobId'],
-            content__icontains=request.query_params['content']
+            content__icontains=request.query_params['content'],
+            create_time__range=date_range
         ).order_by('-record_time')
         page_obj = self.PageNumberPagination()
         page_data = page_obj.paginate_queryset(queryset, request)
@@ -94,51 +112,117 @@ class ErrorLogContentCRUD(APIView):
         data = ErrorLogSer(data=request.data, many=True)
         if data.is_valid():
             data.save()
-            return Response(f'create success', status=status.HTTP_200_OK)
+            return Response(f'create success({len(request.data)})', status=status.HTTP_200_OK)
         else:
             self.logger.error(data.errors)
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def error_log_group_from_sql(request):
-    sql = """
-    SELECT 
-        id,
-        host,
-        log_hour,
-        log_date,
-        sum( log_error_count ) as err_count
-    FROM
-        app_logs_hourlyerrlograte 
-    WHERE
-        log_date = CURDATE()
-    GROUP BY
-        host,
-        log_hour;
-    """
-    result = HourlyErrLogRate.objects.raw(sql)
-    hosts = set(_.host for _ in result)
-    today = datetime.datetime.now().strftime('%Y-%m-%d')
-    now_hour = datetime.datetime.now().hour
-    data = []
-    for hour in range(now_hour+1):
-        row_data = dict()
-        row_data['时间'] = f'{today}T{str(hour).zfill(2)}:00:00'
-        for host in hosts:
-            for item in result:
-                if item.host == host and item.log_hour == hour:
-                    row_data[host] = item.err_count
+    if request.method == 'POST':
+        request_data = eval(request.body.decode())
+        date = request_data['date']
+        if date == 'today':
+            date_range = 'log_date = CURDATE()'
+        elif date == 'yestoday':
+            date_range = 'log_date = CURDATE()-1'
+        elif date == 'before_yestoday':
+            date_range = 'log_date = CURDATE()-2'
+        else:
+            date_range = 'YEARWEEK(log_date) = YEARWEEK(now())'
 
-            if host not in row_data:
-                row_data[host] = 0
-        data.append(row_data)
+        server = request_data["server"] or [""]
+        sql = """
+        SELECT 
+            id,
+            host,
+            log_hour,
+            log_date,
+            sum( log_error_count ) as err_count
+        FROM
+            app_logs_hourlyerrlograte 
+        WHERE
+            {} and host in ({})
+        GROUP BY
+            host,
+            log_hour;
+        """.format(date_range, ','.join(repr(_) for _ in server))
+        result = HourlyErrLogRate.objects.raw(sql)
+        hosts = set(_.host for _ in result)
+        today = datetime.datetime.now().strftime('%Y-%m-%d')
+        now_hour = datetime.datetime.now().hour
+        timeline = []
+        series = dict()
+        for hour in range(now_hour+1):
+            timeline.append(f'{str(hour).zfill(2)}')
+            for host in hosts:
+                if host not in series:
+                    series[host] = []
 
-    data.sort(key=lambda _: _['时间'], reverse=False)
-    return JsonResponse({
-        'code': 200,
-        'data': {
-            'data': data
-        },
-        'message': 'ok'
-    })
+                hour_exist = False
+                for item in result:
+                    if item.host == host and int(item.log_hour) == hour:
+                        series[host].append(int(item.err_count))
+                        hour_exist = True
 
+                if not hour_exist:
+                    series[host].append(0)
+
+        return JsonResponse({
+            'code': 200,
+            'data': {
+                'data': {
+                    'xAxis': timeline if series else [],
+                    'series': series
+                }
+            },
+            'message': 'ok'
+        })
+
+
+def host_error_log_group_from_sql(request):
+    if request.method == 'POST':
+        request_data = eval(request.body.decode())
+        date = request_data['date']
+        if date == 'today':
+            date_range = 'log_date = CURDATE()'
+        elif date == 'yestoday':
+            date_range = 'log_date = CURDATE()-1'
+        elif date == 'before_yestoday':
+            date_range = 'log_date = CURDATE()-2'
+        else:
+            date_range = 'YEARWEEK(log_date) = YEARWEEK(now())'
+
+        server = request_data["server"] or [""]
+        sql = """
+        SELECT 
+            id,
+            host,
+            project,
+            spider,
+            log_date,
+            sum( log_error_count ) as err_count
+        FROM
+            app_logs_dailyerrlograte
+        WHERE
+            {} and host in ({})
+        GROUP BY
+            host,
+            spider
+        ORDER BY
+            err_count desc
+        """.format(date_range, ','.join(repr(_) for _ in server))
+        print(sql)
+        result = DailyErrLogRate.objects.raw(sql)
+        spiders = list(_.spider for _ in result)[:5]
+        error_log_count = list(int(_.err_count) for _ in result)[:5]
+        return JsonResponse({
+            'code': 200,
+            'data': {
+                'data': {
+                    'xAxis': spiders,
+                    'series': error_log_count
+                }
+            },
+            'message': 'ok'
+        })
