@@ -6,10 +6,51 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from dateutil import parser as dt_parser
 from crawler_studio.utils.time import seconds_to_dhms_zh
-from .models import SpiderStats
-from .ser import SpiderStatsSer
+from .models import SpiderStats, SpiderStartParams
+from .ser import SpiderStatsSer, SpiderStartParamsSer
+from crawler_studio.app_schedule.models import MonitorRules
 
 logger = logging.getLogger(__name__)
+
+
+class NewTaskCRUD(APIView):
+
+    def get(self, request, **kwargs):
+        """
+        获取所有项目的所有爬虫及其启动参数，先获取默认参数，再获取此爬虫的参数
+        """
+        host = request.query_params['host']
+        scrapyd = ScrapydAPI(target=host)
+        projects = scrapyd.list_projects()
+        info = []
+        default_params = SpiderStartParams.objects.filter(project='__default', spider='__default').first()
+        for project in projects:
+            if project not in ('.DS_Store', ):
+                try:
+                    spiders = scrapyd.list_spiders(project)
+                    for spider in spiders:
+                        spider_params = SpiderStartParams.objects.filter(project=project, spider=spider).first()
+                        if spider_params:
+                            ser = SpiderStartParamsSer(spider_params)
+                            item = ser.data
+                        else:
+                            ser = SpiderStartParamsSer(default_params)
+                            item = ser.data
+                            item.update({
+                                'project': project,
+                                'spider': spider
+                            })
+                        info.append(item)
+                except Exception as e:
+                    logger.error(e)
+        res = {
+            'code': 200,
+            'data': {
+                'data': info
+            },
+            'message': 'ok'
+        }
+        return Response(res)
 
 
 class RunningTaskCRUD(APIView):
@@ -30,14 +71,20 @@ class RunningTaskCRUD(APIView):
             j = ins.list_jobs(p)
             for running in j['running']:
                 stats = SpiderStats.objects.filter(job_id=running['id']).first()
+                monitor_rule = MonitorRules.objects.filter(spider_job_id=running['id']).first()
                 item = dict()
                 item['project'] = p
                 item['job_id'] = running['id']
                 item['spider'] = running['spider']
                 item['pid'] = running['pid']
                 item['start_time'] = running['start_time'].split('.')[0]
+                item['schedule_type'] = 'Unknown' if stats is None else stats.run_type
+                item['trigger'] = 'Unknown' if stats is None else stats.trigger
+                item['last_run'] = 'Unknown' if stats is None else stats.last_run
                 item['memory_use'] = 0 if stats is None else stats.memory_use
+                item['memory_use_limit'] = 'Unknown' if monitor_rule is None else monitor_rule.memory_use_limit
                 item['log_hourly_error_rate'] = 'Unknown' if stats is None else stats.log_hourly_error_rate
+                item['log_hourly_error_limit'] = 'Unknown' if monitor_rule is None else monitor_rule.errlog_rate_limit
                 running_info.append(item)
         running_info.sort(key=lambda _: _['start_time'], reverse=True)
         res = {
@@ -153,4 +200,29 @@ class SpiderStatsCRUD(APIView):
             return Response(stats.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, **kwargs):
+        pass
+
+
+class SpiderStartParamsCRUD(APIView):
+
+    def get(self, request, **kwargs):
+        project = request.query_params.get('project', '__default')
+        data = SpiderStartParams.objects.filter(project=project).first()
+        ser = SpiderStartParamsSer(data)
+        return Response(ser.data)
+
+    def post(self, request, **kwargs):
+        existed = SpiderStartParams.objects.filter(project=request.data['project'], spider=request.data['spider']).first()
+        params = SpiderStartParamsSer(instance=existed, data=request.data)
+        if params.is_valid():
+            params.save()
+            if existed:
+                return Response(f"update success", status=status.HTTP_200_OK)
+            else:
+                return Response(f"create success", status=status.HTTP_200_OK)
+        else:
+            logger.error(params.errors)
+            return Response(params.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, **kwargs):
         pass

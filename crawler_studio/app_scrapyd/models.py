@@ -26,3 +26,20 @@ class SpiderStats(models.Model):
     create_time = models.DateTimeField(auto_now=True)
     update_time = models.DateTimeField(auto_now_add=True)
 
+
+class SpiderStartParams(models.Model):
+    """爬虫启动参数表"""
+    id = models.AutoField(primary_key=True)
+    project = models.CharField(max_length=255)
+    spider = models.CharField(max_length=255)
+    run_type = models.CharField(max_length=50, verbose_name='interval or crontab')
+    trigger = models.CharField(max_length=50)
+    monitor_freq = models.IntegerField()
+    errlog_rate_limit = models.FloatField()
+    memory_use_limit = models.IntegerField(verbose_name='内存使用上限')
+    enable_send_error_log = models.BooleanField(verbose_name='是否发送错误日志内容到服务器')
+    enable_monitor_rule = models.BooleanField(verbose_name='是否开启爬虫监控')
+    monitor_recipients = models.CharField(max_length=255)
+    params = models.TextField(verbose_name='其他启动参数', null=True)
+    create_time = models.DateTimeField(auto_now=True)
+    update_time = models.DateTimeField(auto_now_add=True)
