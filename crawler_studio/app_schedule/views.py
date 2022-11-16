@@ -21,8 +21,14 @@ class MonitorRecipientsCRUD(APIView):
     def get(self, request, **kwargs):
         data = MonitorRecipients.objects.all()
         ser = MonitorRecipientsSerializer(data, many=True)
-        content = {'code': 0, 'data': ser.data}
-        return Response(content)
+        res = {
+            'code': 200,
+            'data': {
+                'data': ser.data
+            },
+            'message': 'ok'
+        }
+        return Response(res)
 
     def post(self, request, **kwargs):
         existed = MonitorRecipients.objects.filter(rev_addr=request.data['rev_addr']).first()
@@ -30,16 +36,36 @@ class MonitorRecipientsCRUD(APIView):
         if recipients.is_valid():
             recipients.save()
             if existed:
-                return Response('更新成功', status=status.HTTP_200_OK)
+                res = {
+                    'code': 200,
+                    'data': None,
+                    'message': '修改成功'
+                }
+                return Response(res)
             else:
-                return Response('添加成功', status=status.HTTP_200_OK)
+                res = {
+                    'code': 200,
+                    'data': None,
+                    'message': '添加成功'
+                }
+                return Response(res)
         else:
             logger.error(recipients.errors)
-            return Response(recipients.errors, status=status.HTTP_400_BAD_REQUEST)
+            res = {
+                'code': 400,
+                'data': None,
+                'message': recipients.errors
+            }
+            return Response(res)
 
     def delete(self, request, **kwargs):
         MonitorRecipients.objects.filter(rev_addr=request.data['rev_addr']).delete()
-        return Response('删除成功', status=status.HTTP_200_OK)
+        res = {
+            'code': 200,
+            'data': None,
+            'message': '删除成功'
+        }
+        return Response(res)
 
 
 class MonitorRulesCRUD(APIView):
