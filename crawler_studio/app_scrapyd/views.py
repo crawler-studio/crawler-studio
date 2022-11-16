@@ -216,13 +216,20 @@ class SpiderStartParamsCRUD(APIView):
         params = SpiderStartParamsSer(instance=existed, data=request.data)
         if params.is_valid():
             params.save()
-            if existed:
-                return Response(f"update success", status=status.HTTP_200_OK)
-            else:
-                return Response(f"create success", status=status.HTTP_200_OK)
+            res = {
+                'code': 200,
+                'data': None,
+                'message': '修改成功'
+            }
+            return Response(res)
         else:
             logger.error(params.errors)
-            return Response(params.errors, status=status.HTTP_400_BAD_REQUEST)
+            res = {
+                'code': 400,
+                'data': None,
+                'message': params.errors
+            }
+            return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, **kwargs):
         pass

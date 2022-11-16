@@ -17,10 +17,11 @@ class SpiderStatsSer(serializers.ModelSerializer):
 
 class SpiderStartParamsSer(serializers.ModelSerializer):
 
-    params = serializers.CharField(allow_blank=True)
+    params = Str2DictSerializerField(allow_null=True)
+    run_type = serializers.CharField(allow_blank=True)
+    trigger = serializers.CharField(allow_blank=True)
     monitor_recipients = Str2ListSerializerField()
     monitor_freq = Str2IntSerializerField()
-    params = Str2DictSerializerField()
 
     class Meta:
         model = SpiderStartParams
