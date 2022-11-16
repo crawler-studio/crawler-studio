@@ -1,8 +1,8 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .ser import ScrapydServerSer
-from .models import ScrapydServer
+from .ser import *
+from .models import *
 from django.forms.models import model_to_dict
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -83,3 +83,39 @@ class ScrapydServerAddr(APIView):
             'message': '修改默认服务器成功'
         }
         return Response(res)
+
+
+class MailSenderCRUD(APIView):
+
+    def get(self, request):
+        data = MailSender.objects.first()
+        ser = MailSenderSer(data)
+        res = {
+            'code': 200,
+            'data': {
+                'data': ser.data
+            },
+            'message': 'ok'
+        }
+        return Response(res)
+
+    def post(self, request):
+        print(request.data)
+        existed = MailSender.objects.first()
+        sender = MailSenderSer(instance=existed, data=request.data)
+        if sender.is_valid():
+            sender.save()
+            res = {
+                'code': 200,
+                'data': None,
+                'message': '添加成功' if not existed else '修改成功'
+            }
+            return Response(res)
+        else:
+            sender.save()
+            res = {
+                'code': 400,
+                'data': None,
+                'message': sender.errors
+            }
+            return Response(res)

@@ -10,3 +10,13 @@ class ScrapydServer(models.Model):
     is_default = models.SmallIntegerField(default=0)
     create_time = models.DateTimeField(auto_now=True, db_index=True)
     update_time = models.DateTimeField(auto_now_add=True, db_index=True)
+
+
+class MailSender(models.Model):
+    id = models.AutoField(primary_key=True)
+    mail_addr = models.CharField(max_length=255)
+    mail_port = models.IntegerField(default=465)
+    server_addr = models.CharField(max_length=255)
+    auth_code = models.CharField(max_length=255)
+    create_time = models.DateTimeField(auto_now=True, db_index=True)
+    update_time = models.DateTimeField(auto_now_add=True, db_index=True)

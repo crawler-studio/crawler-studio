@@ -9,4 +9,5 @@ from crawler_studio.app_settings import views
 
 urlpatterns = [
     url('scrapydserver/', views.ScrapydServerAddr.as_view()),
+    url('mailSender/', views.MailSenderCRUD.as_view()),
 ]
