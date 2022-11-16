@@ -1,5 +1,4 @@
 import logging
-
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -80,7 +79,14 @@ class MonitorRulesCRUD(APIView):
 
     def get(self, request):
         ser = MonitorRulesSerializer(instance=MonitorRules.objects.all(), many=True)
-        return Response(ser.data)
+        res = {
+            'code': 200,
+            'data': {
+                'data': ser.data
+            },
+            'message': 'ok'
+        }
+        return Response(res)
 
     def post(self, request, **kwargs):
         if 'recipients' not in request.data:       # add default recipients
@@ -103,10 +109,20 @@ class MonitorRulesCRUD(APIView):
         rule = MonitorRulesSerializer(data=request.data)
         if rule.is_valid():
             if MonitorRules.objects.filter(spider_job_id=rule.validated_data['spider_job_id']):
-                return Response('This jobid has monitor rule already')
+                res = {
+                    'code': 200,
+                    'data': None,
+                    'message': 'This jobid has monitor rule already'
+                }
+                return Response(res)
             else:
                 obj = rule.save()
-                return Response(f'Create success {obj.id}', status=status.HTTP_200_OK)
+                res = {
+                    'code': 200,
+                    'data': None,
+                    'message': f'添加成功 {obj.id}'
+                }
+                return Response(res)
         else:
             self.logger.error(rule.errors)
             return Response(rule.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -116,7 +132,12 @@ class MonitorRulesCRUD(APIView):
         rule = MonitorRulesSerializer(instance=existed, data=request.data)
         if rule.is_valid():
             rule.save()
-            return Response('Update success', status=status.HTTP_200_OK)
+            res = {
+                'code': 200,
+                'data': None,
+                'message': f'更新成功'
+            }
+            return Response(res)
         else:
             self.logger.error(rule.errors)
             return Response(rule.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -124,7 +145,12 @@ class MonitorRulesCRUD(APIView):
     def delete(self, request, **kwargs):
         rule = MonitorRules.objects.filter(spider_job_id=request.data['spider_job_id']).first()
         scheduler.remove_job(rule.timer_task.id)
+        res = {
+            'code': 200,
+            'data': None,
+            'message': f'删除成功 {rule.timer_task}'
+        }
         self.logger.info(f'Delete timer task success {rule.timer_task}')
-        return Response('Delete success', status=status.HTTP_200_OK)
+        return Response(res)
 
 
