@@ -52,6 +52,27 @@ class NewTaskCRUD(APIView):
         }
         return Response(res)
 
+    def post(self, request, **kwargs):
+        """
+        启动爬虫，并且传递设置参数
+        """
+        data = request.data
+        setting = dict()
+        setting['CS_ENABLE_MONITOR_RULE'] = data['enable_monitor_rule']
+        setting['CS_ENABLE_SEND_ERR_TEXT'] = data['enable_send_error_log']
+        setting['CS_MONITOR_FREQ'] = int(data['monitor_freq'])
+        setting['CS_ERRLOG_RATE_LIMIT'] = float(data['errlog_rate_limit'])
+        setting['CS_MEMORY_USE_LIMIT'] = int(data['memory_use_limit'])
+        logger.info(f'Start spider, spider settings {setting}')
+        ins = ScrapydAPI(target=data['host'])
+        job_id = ins.schedule(data['project'], data['spider'], settings=setting)
+        res = {
+            'code': 200,
+            'data': None,
+            'message': f'启动成功 {job_id}',
+        }
+        return Response(res)
+
 
 class RunningTaskCRUD(APIView):
 
@@ -78,9 +99,9 @@ class RunningTaskCRUD(APIView):
                 item['spider'] = running['spider']
                 item['pid'] = running['pid']
                 item['start_time'] = running['start_time'].split('.')[0]
-                item['schedule_type'] = 'Unknown' if stats is None else stats.run_type
-                item['trigger'] = 'Unknown' if stats is None else stats.trigger
-                item['last_run'] = 'Unknown' if stats is None else stats.last_run
+                # item['schedule_type'] = 'Unknown' if stats is None else stats.run_type
+                # item['trigger'] = 'Unknown' if stats is None else stats.trigger
+                # item['last_run'] = 'Unknown' if stats is None else stats.last_run
                 item['memory_use'] = 0 if stats is None else stats.memory_use
                 item['memory_use_limit'] = 'Unknown' if monitor_rule is None else monitor_rule.memory_use_limit
                 item['log_hourly_error_rate'] = 'Unknown' if stats is None else stats.log_hourly_error_rate
