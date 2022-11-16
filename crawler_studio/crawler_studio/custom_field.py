@@ -20,7 +20,7 @@ class Str2IntSerializerField(serializers.Field):
 class Str2ListSerializerField(serializers.Field):
 
     def to_representation(self, value):
-        return value.split(',')
+        return [] if not value else value.split(',')
 
     def to_internal_value(self, data):
         return ','.join(data)

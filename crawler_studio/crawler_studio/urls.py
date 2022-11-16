@@ -26,6 +26,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/logs/', include('crawler_studio.app_logs.urls')),
+    path('api/v1/schedule/', include('crawler_studio.app_schedule.urls')),
     path('api/v1/scrapyd/', include('crawler_studio.app_scrapyd.urls')),
     path('api/v1/settings/', include('crawler_studio.app_settings.urls')),
     path('api/v1/user/', include('crawler_studio.app_user.urls')),
