@@ -6,26 +6,20 @@
 @Author: liuxianglong
 @Date: 2021.06.06
 """
+import os
 import requests
 import logging
 from email.mime.text import MIMEText  # 专门发送正文
 from email.mime.multipart import MIMEMultipart  # 发送多个部分
 from email.mime.application import MIMEApplication  # 发送附件
 import smtplib  # 发送邮件
-import os
-
-MAIL_SENDER = '862187570@qq.com'
-MAIL_AUTH_CODE = 'yeyjqqckemojbehh'
-MAIL_SERVER_ADDR = 'smtp.qq.com'
-MAIL_PORT = 465
-
-DING_ROBOT_ADDR = 'https://oapi.dingtalk.com/robot/send?access_token=bcb00a856d256885e6b282299b7e0678d3016914e2b6daab17d5773ac759db1d'
+from crawler_studio.app_settings.models import MailSender
 
 
 logger = logging.getLogger(__name__)
 
 
-def send_ding_message(title, content, ding_addr=DING_ROBOT_ADDR):
+def send_ding_message(title, content, ding_addr):
     """
     发送钉钉报警
     useage: send_ding_message('虎博爬虫预警', '测试')
@@ -50,7 +44,7 @@ def send_ding_message(title, content, ding_addr=DING_ROBOT_ADDR):
 
 
 def send_mail(receiver: str, subject: str = "", content: str = "",
-              attach='', sender=MAIL_SENDER, auth_code=MAIL_AUTH_CODE, server_addr=MAIL_SERVER_ADDR, server_port=MAIL_PORT):
+              attach=''):
     """
     发送带附件的邮件
     :param attach: 附件全路径
@@ -63,6 +57,16 @@ def send_mail(receiver: str, subject: str = "", content: str = "",
     :param server_port: 邮件发送端口
     :return:
     """
+    mail_sender = MailSender.objects.first()
+    if not mail_sender:
+        logger.info(f'系统邮件发件人不存在')
+        return
+
+    sender = mail_sender.mail_addr
+    auth_code = mail_sender.auth_code
+    server_addr = mail_sender.server_addr
+    server_port = mail_sender.mail_port
+
     # 构造一个邮件体：正文 附件
     msg = MIMEMultipart()
     msg['Subject'] = subject  # 主题
