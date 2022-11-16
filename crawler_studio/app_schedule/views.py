@@ -120,7 +120,7 @@ class MonitorRulesCRUD(APIView):
                 res = {
                     'code': 200,
                     'data': None,
-                    'message': f'添加成功 {obj.id}'
+                    'message': f'增加成功 {obj.id}'
                 }
                 return Response(res)
         else:
@@ -135,7 +135,7 @@ class MonitorRulesCRUD(APIView):
             res = {
                 'code': 200,
                 'data': None,
-                'message': f'更新成功'
+                'message': f'修改成功'
             }
             return Response(res)
         else:
