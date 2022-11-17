@@ -37,8 +37,7 @@ cs changepassword [username]       //修改密码
 cs runserver [ip]:[port]
 ```
 
-### 爬虫端
-安装 cs_sender
+爬虫项目安装 cs_sender
 ```
 pip install cs_sender
 ```
