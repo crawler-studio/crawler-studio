@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>} &#8212; crawler_studio 1.5.0 文档</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="maintainers.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <p># 使用</p>
+<p>## 初始化及运行WEBUI
+初始化数据表到本地sqlite
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">cs</span> <span class="pre">migrate</span>
+<span class="pre">cs</span> <span class="pre">init</span>
+<span class="pre">`</span></code></p>
+<p>运行WEB页面
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">cs</span> <span class="pre">runserver</span> <span class="pre">[ip]:[port]</span>
+<span class="pre">`</span></code></p>
+<p>注册用户用于登陆WEBUI
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">cs</span> <span class="pre">createsuperuser</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">//注册</span>
+<span class="pre">cs</span> <span class="pre">changepassword</span> <span class="pre">[username]</span>&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">//修改密码</span>
+<span class="pre">`</span></code></p>
+<p>## 登陆WEBTUI后的设置
+使用注册用户登陆 crawler-studio后，需要在 Settings-General 界面设置Scrapyd服务器地址、系统邮件发件人、监控收件人</p>
+<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eq428kbj325v0u0wgx.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88eq428kbj325v0u0wgx.jpg</a>)</p>
+<p>设置Scrapyd服务器</p>
+<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eot4x9zj30u00urt9j.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88eot4x9zj30u00urt9j.jpg</a>)</p>
+<p>设置系统邮件发件人</p>
+<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88epc9u8cj30pw0i8q3t.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88epc9u8cj30pw0i8q3t.jpg</a>)</p>
+<p>设置监控收件人</p>
+<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88g21kfurj31340n6758.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88g21kfurj31340n6758.jpg</a>)</p>
+<p>## Scrapy爬虫设置
+在scrapy项目的settings.py文件中开启扩展用于上传运行数据，其中
+- CS_BACKEND    表示 crawler-studio 的运行地址
+- CS_API_TOKEN  表示注册用户的token</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
+CS_BACKEND = ‘<a class="reference external" href="http://localhost:8000">http://localhost:8000</a>’
+CS_API_TOKEN = ‘901f2e74fb57e12536dea98fd199aff0eddf0190’
+EXTENSIONS = {</p>
+<blockquote>
+<div><p>‘cs_sender.ScrapyMonitor’: 500,</p>
+</div></blockquote>
+<section id="id3">
+<h1>}<a class="headerlink" href="#id3" title="此标题的永久链接">¶</a></h1>
+<p>获取注册用户的token
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">cs</span> <span class="pre">get_token</span> <span class="pre">-u</span> <span class="pre">[username]</span> <span class="pre">-p</span> <span class="pre">[password]</span>
+<span class="pre">`</span></code></p>
+<p>## 完成
+完成以上设置后，就可以开始正常使用Crawler-Studio了，后续每次在Start界面启动爬虫后，都会自动启动监控规则以及上传爬虫运行数据。</p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">crawler_studio</a></h1>
+
+
+
+
+
+
+
+
+<h3>导航</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">使用</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="上一章">&lt;no title&gt;</a></li>
+      <li>Next: <a href="maintainers.html" title="下一章">&lt;no title&gt;</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, liuxianglong.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/usage.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
