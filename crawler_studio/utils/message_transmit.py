@@ -4,7 +4,6 @@
 钉钉机器人使用方法参考：https://developers.dingtalk.com/document/app/custom-robot-access
 @Usage:
 @Author: liuxianglong
-@Date: 2021.06.06
 """
 import os
 import requests
