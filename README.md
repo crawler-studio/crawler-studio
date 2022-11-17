@@ -1,6 +1,6 @@
-# crawler-studio
+# Crawler-Studio
 
-## scrapy爬虫监控平台
+## Scrapy爬虫监控平台
 
 - 大屏展示scrapy爬虫运行状况
 - 可视化实时读取爬虫运行数据、错误日志
@@ -9,24 +9,24 @@
 
 ![](https://tva1.sinaimg.cn/large/008vxvgGgy1h88cfhw9qbj31h20u00wi.jpg)
 
-## 说明文档
+----
+## 文档
 https://crawler-studio.readthedocs.io/en/latest/
 
-## 使用说明
-
-### 服务器端
-安装 crawler_studio
+----
+## 使用
+安装crawler_studio
 ```
 pip install crawler_studio
 ```
 
-初始化
+初始化数据库
 ```
 cs migrate
 cs init
 ```
 
-注册用户
+注册WEBUI用户
 ```
 cs createsuperuser                 //注册
 cs changepassword [username]       //修改密码
@@ -37,12 +37,12 @@ cs changepassword [username]       //修改密码
 cs runserver [ip]:[port]
 ```
 
-### Scrapy爬虫客户端
+### 爬虫端
 安装 cs_sender
 ```
 pip install cs_sender
 ```
-在scrapy的settings.py文件中开启扩展，其中
+在Scrapy项目的settings.py文件中开启扩展，其中
 - CS_BACKEND    表示 crawler-studio 的运行地址
 - CS_API_TOKEN  表示注册用户的token
 
@@ -54,7 +54,7 @@ EXTENSIONS = {
 }
 ```
 
-- 获取注册用户token的指令
+- 获取注册用户端token
 ```
 cs get_token -u [username] -p [password]
 ```
