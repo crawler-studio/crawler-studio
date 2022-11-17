@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>} &mdash; crawler_studio 1.5.0 文档</title>
+  <title>使用 &mdash; crawler_studio 1.5.0 文档</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,12 +18,11 @@
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/translations.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="maintainers.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="installation.html" /> 
+    <link rel="next" title="作者" href="maintainers.html" />
+    <link rel="prev" title="安装" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,7 +41,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">安装</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#webui">初始化及运行WEBUI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#webtui">登陆WEBTUI后的设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scrapy">Scrapy爬虫设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">完成</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="maintainers.html">作者</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">协议</a></li>
 </ul>
 
         </div>
@@ -59,7 +68,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">}</li>
+      <li class="breadcrumb-item active">使用</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/usage.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -69,82 +78,67 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<p># 使用</p>
-<p>## 初始化及运行WEBUI
-初始化数据表到本地sqlite
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">cs</span> <span class="pre">migrate</span>
-<span class="pre">cs</span> <span class="pre">init</span>
-<span class="pre">`</span></code></p>
-<p>运行WEB页面
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">cs</span> <span class="pre">runserver</span> <span class="pre">[ip]:[port]</span>
-<span class="pre">`</span></code></p>
-<p>注册用户用于登陆WEBUI
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">cs</span> <span class="pre">createsuperuser</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">//注册</span>
-<span class="pre">cs</span> <span class="pre">changepassword</span> <span class="pre">[username]</span>&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">//修改密码</span>
-<span class="pre">`</span></code></p>
-<p>## 登陆WEBTUI后的设置
-使用注册用户登陆 crawler-studio后，需要在 Settings-General 界面设置Scrapyd服务器地址、系统邮件发件人、监控收件人</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eq428kbj325v0u0wgx.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88eq428kbj325v0u0wgx.jpg</a>)</p>
+  <section id="id1">
+<h1>使用<a class="headerlink" href="#id1" title="此标题的永久链接">¶</a></h1>
+<section id="webui">
+<h2>初始化及运行WEBUI<a class="headerlink" href="#webui" title="此标题的永久链接">¶</a></h2>
+<p>初始化数据表到本地sqlite</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span> <span class="n">migrate</span>
+<span class="n">cs</span> <span class="n">init</span>
+</pre></div>
+</div>
+<p>运行WEB页面</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span> <span class="n">runserver</span> <span class="p">[</span><span class="n">ip</span><span class="p">]:[</span><span class="n">port</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>注册用户用于登陆WEBUI</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span> <span class="n">createsuperuser</span>                 <span class="o">//</span><span class="n">注册</span>
+<span class="n">cs</span> <span class="n">changepassword</span> <span class="p">[</span><span class="n">username</span><span class="p">]</span>       <span class="o">//</span><span class="n">修改密码</span>
+</pre></div>
+</div>
+</section>
+<section id="webtui">
+<h2>登陆WEBTUI后的设置<a class="headerlink" href="#webtui" title="此标题的永久链接">¶</a></h2>
+<p>使用注册用户登陆 crawler-studio后，需要在 Settings-General 界面设置Scrapyd服务器地址、系统邮件发件人、监控收件人</p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eq428kbj325v0u0wgx.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eq428kbj325v0u0wgx.jpg" /></p>
 <p>设置Scrapyd服务器</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eot4x9zj30u00urt9j.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88eot4x9zj30u00urt9j.jpg</a>)</p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eot4x9zj30u00urt9j.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eot4x9zj30u00urt9j.jpg" /></p>
 <p>设置系统邮件发件人</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88epc9u8cj30pw0i8q3t.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88epc9u8cj30pw0i8q3t.jpg</a>)</p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88epc9u8cj30pw0i8q3t.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88epc9u8cj30pw0i8q3t.jpg" /></p>
 <p>设置监控收件人</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88g21kfurj31340n6758.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88g21kfurj31340n6758.jpg</a>)</p>
-<p>## Scrapy爬虫设置
-在scrapy项目的settings.py文件中开启扩展用于上传运行数据，其中
-- CS_BACKEND    表示 crawler-studio 的运行地址
-- CS_API_TOKEN  表示注册用户的token</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
-CS_BACKEND = ‘<a class="reference external" href="http://localhost:8000">http://localhost:8000</a>’
-CS_API_TOKEN = ‘901f2e74fb57e12536dea98fd199aff0eddf0190’
-EXTENSIONS = {</p>
-<blockquote>
-<div><p>‘cs_sender.ScrapyMonitor’: 500,</p>
-</div></blockquote>
-<section id="id3">
-<h1>}<a class="headerlink" href="#id3" title="此标题的永久链接">¶</a></h1>
-<p>获取注册用户的token
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">cs</span> <span class="pre">get_token</span> <span class="pre">-u</span> <span class="pre">[username]</span> <span class="pre">-p</span> <span class="pre">[password]</span>
-<span class="pre">`</span></code></p>
-<p>## 完成
-完成以上设置后，就可以开始正常使用Crawler-Studio了，后续每次在Start界面启动爬虫后，都会自动启动监控规则以及上传爬虫运行数据。</p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88g21kfurj31340n6758.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88g21kfurj31340n6758.jpg" /></p>
+</section>
+<section id="scrapy">
+<h2>Scrapy爬虫设置<a class="headerlink" href="#scrapy" title="此标题的永久链接">¶</a></h2>
+<p>在scrapy项目的settings.py文件中开启扩展用于上传运行数据，其中</p>
+<ul class="simple">
+<li><p>CS_BACKEND    表示 crawler-studio 的运行地址</p></li>
+<li><p>CS_API_TOKEN  表示注册用户的token</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CS_BACKEND</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:8000&#39;</span>
+<span class="n">CS_API_TOKEN</span> <span class="o">=</span> <span class="s1">&#39;901f2e74fb57e12536dea98fd199aff0eddf0190&#39;</span>
+<span class="n">EXTENSIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;cs_sender.ScrapyMonitor&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>获取注册用户的token</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span> <span class="n">get_token</span> <span class="o">-</span><span class="n">u</span> <span class="p">[</span><span class="n">username</span><span class="p">]</span> <span class="o">-</span><span class="n">p</span> <span class="p">[</span><span class="n">password</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>完成<a class="headerlink" href="#id2" title="此标题的永久链接">¶</a></h2>
+<p>完成以上设置后，就可以开始正常使用Crawler-Studio了，后续每次在Start界面启动爬虫后，都会自动启动监控规则以及上传爬虫运行数据。</p>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="installation.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="maintainers.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="安装" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="maintainers.html" class="btn btn-neutral float-right" title="作者" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -5,6 +5,8 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+import recommonmark
+import sphinx_rtd_theme  # 添加这行
 from recommonmark.parser import CommonMarkParser
 source_parsers = {
   '.md': CommonMarkParser,
@@ -20,14 +22,7 @@ release = '1.5.0'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-  'sphinx.ext.autodoc',
-  'sphinx.ext.viewcode',
-  'sphinx.ext.todo',
-  'sphinx.ext.mathjax',
-  'sphinx.ext.apidoc',
-  'sphinx.ext.extlinks',
-  'nbsphinx',
-  'sphinx_markdown_tables'
+  'recommonmark'
 ]
 
 templates_path = ['_templates']
@@ -40,7 +35,6 @@ master_doc = 'index'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-import sphinx_rtd_theme  # 添加这行
 
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]

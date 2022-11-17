@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; crawler_studio 1.5.0 文档</title>
+  <title>介绍 &mdash; crawler_studio 1.5.0 文档</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,11 +18,10 @@
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/translations.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="installation.html" />
+    <link rel="next" title="安装" href="installation.html" />
     <link rel="prev" title="Welcome to crawler-studio’s documentation!" href="index.html" /> 
 </head>
 
@@ -41,8 +40,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintainers.html">作者</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">协议</a></li>
 </ul>
 
         </div>
@@ -59,7 +62,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="breadcrumb-item active">介绍</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/introduction.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -69,31 +72,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<p># 介绍</p>
+  <section id="id1">
+<h1>介绍<a class="headerlink" href="#id1" title="此标题的永久链接">¶</a></h1>
 <p>Crawler-Studio是基于Scrapy、Scrapyd、Scrapyd-Client、Scrapyd-API、Django、DRF、Vue.js 开发的一款开源分布式Scrapy爬虫监控平台</p>
 <ul class="simple">
 <li><p>大屏展示scrapy爬虫运行状况</p></li>
@@ -101,23 +81,26 @@
 <li><p>监控爬虫日志错误率、内存占用以及掉线通知</p></li>
 <li><p>可视化分布式爬虫管理</p></li>
 </ul>
-<p>本平台的优点
-- 体积小、依赖少、安装简单
-- 可视化界面操作简单
-- 做到了实时监控</p>
-<p>如在使用过程中遇到问题，欢迎到 [Issues](<a class="reference external" href="https://github.com/crawler-studio/crawler-studio/issuess">https://github.com/crawler-studio/crawler-studio/issuess</a>) 搜索解决方案或者提 Issue，感谢您的支持。</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88cfhw9qbj31h20u00wi.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88cfhw9qbj31h20u00wi.jpg</a>)</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ehdzutqj31tl0u0n0x.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88ehdzutqj31tl0u0n0x.jpg</a>)</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ei49ornj31xs0u0790.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88ei49ornj31xs0u0790.jpg</a>)</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eijzlbfj31xu0u0tff.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88eijzlbfj31xu0u0tff.jpg</a>)</p>
-<p>![](<a class="reference external" href="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ej6wma6j31p70u0adu.jpg">https://tva1.sinaimg.cn/large/008vxvgGgy1h88ej6wma6j31p70u0adu.jpg</a>)</p>
+<p>本平台的优点</p>
+<ul class="simple">
+<li><p>体积小、依赖少、安装简单</p></li>
+<li><p>可视化界面操作简单</p></li>
+<li><p>做到了实时监控</p></li>
+</ul>
+<p>如在使用过程中遇到问题，欢迎到 <a class="reference external" href="https://github.com/crawler-studio/crawler-studio/issuess">Issues</a> 搜索解决方案或者提 Issue，感谢您的支持。</p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88cfhw9qbj31h20u00wi.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88cfhw9qbj31h20u00wi.jpg" /></p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ehdzutqj31tl0u0n0x.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ehdzutqj31tl0u0n0x.jpg" /></p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ei49ornj31xs0u0790.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ei49ornj31xs0u0790.jpg" /></p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eijzlbfj31xu0u0tff.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88eijzlbfj31xu0u0tff.jpg" /></p>
+<p><img alt="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ej6wma6j31p70u0adu.jpg" src="https://tva1.sinaimg.cn/large/008vxvgGgy1h88ej6wma6j31p70u0adu.jpg" /></p>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to crawler-studio’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="installation.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="安装" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

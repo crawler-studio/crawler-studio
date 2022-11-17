@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; crawler_studio 1.5.0 文档</title>
+  <title>安装 &mdash; crawler_studio 1.5.0 文档</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,12 +18,11 @@
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/translations.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="}" href="usage.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="introduction.html" /> 
+    <link rel="next" title="使用" href="usage.html" />
+    <link rel="prev" title="介绍" href="introduction.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,8 +40,16 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">介绍</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">安装</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#crawler-studio">crawler_studio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cs-sender">cs_sender</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintainers.html">作者</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">协议</a></li>
 </ul>
 
         </div>
@@ -59,7 +66,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="breadcrumb-item active">安装</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/installation.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -69,67 +76,51 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
+  <section id="id1">
+<h1>安装<a class="headerlink" href="#id1" title="此标题的永久链接">¶</a></h1>
+<section id="crawler-studio">
+<h2>crawler_studio<a class="headerlink" href="#crawler-studio" title="此标题的永久链接">¶</a></h2>
+<p>安装crawler_studio，启动后会出现一个可视化爬虫管理界面</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">crawler_studio</span>
+</pre></div>
+</div>
+<p>安装完后在控制台输入:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span>
+</pre></div>
+</div>
+<p>如果能看到如下输出, 说明安装成功</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Type</span> <span class="s1">&#39;cs help &lt;subcommand&gt;&#39;</span> <span class="k">for</span> <span class="n">help</span> <span class="n">on</span> <span class="n">a</span> <span class="n">specific</span> <span class="n">subcommand</span><span class="o">.</span>
 
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
+<span class="n">Available</span> <span class="n">subcommands</span><span class="p">:</span>
 
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
+<span class="p">[</span><span class="n">auth</span><span class="p">]</span>
+    <span class="n">changepassword</span>
+    <span class="n">createsuperuser</span>
 
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
+<span class="p">[</span><span class="n">authtoken</span><span class="p">]</span>
+    <span class="n">drf_create_token</span>
 
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<p># 安装</p>
-<p>## crawler_studio
-安装crawler_studio，启动后会出现一个可视化爬虫管理界面
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">pip</span> <span class="pre">install</span> <span class="pre">crawler_studio</span>
-<span class="pre">`</span></code>
-安装完后在控制台输入:
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">cs</span>
-<span class="pre">`</span></code>
-如果能看到如下输出, 说明安装成功</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
-Type ‘cs help &lt;subcommand&gt;’ for help on a specific subcommand.</p>
-<p>Available subcommands:</p>
-<dl class="simple">
-<dt>[auth]</dt><dd><p>changepassword
-createsuperuser</p>
-</dd>
-<dt>[authtoken]</dt><dd><p>drf_create_token</p>
-</dd>
-<dt>[contenttypes]</dt><dd><p>remove_stale_contenttypes
-…</p>
-</dd>
-</dl>
-<p><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a></p>
-<p>## cs_sender
-安装 cs_sender，这个安装包用于Scrapy爬虫上传运行数据
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cs_sender</span>
-<span class="pre">`</span></code></p>
+<span class="p">[</span><span class="n">contenttypes</span><span class="p">]</span>
+    <span class="n">remove_stale_contenttypes</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="cs-sender">
+<h2>cs_sender<a class="headerlink" href="#cs-sender" title="此标题的永久链接">¶</a></h2>
+<p>安装 cs_sender，这个安装包用于Scrapy爬虫上传运行数据</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">cs_sender</span>
+</pre></div>
+</div>
+</section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="introduction.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="usage.html" class="btn btn-neutral float-right" title="}" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="introduction.html" class="btn btn-neutral float-left" title="介绍" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="使用" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
