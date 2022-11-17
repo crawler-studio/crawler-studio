@@ -7,7 +7,7 @@
 - 监控爬虫日志错误率、内存占用、掉线通知
 - 可视化分布式爬虫管理
 
-![](https://tva1.sinaimg.cn/large/008vxvgGgy1h88cdb5l8hj31ia0u00wl.jpg)
+![](https://tva1.sinaimg.cn/large/008vxvgGgy1h88cfhw9qbj31h20u00wi.jpg)
 
 ## 说明文档
 https://crawler-studio.readthedocs.io/en/latest/
