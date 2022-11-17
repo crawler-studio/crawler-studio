@@ -24,13 +24,12 @@ from django.views.generic import TemplateView
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/logs/', include('crawler_studio.app_logs.urls')),
-    path('api/v1/schedule/', include('crawler_studio.app_schedule.urls')),
-    path('api/v1/scrapyd/', include('crawler_studio.app_scrapyd.urls')),
-    path('api/v1/settings/', include('crawler_studio.app_settings.urls')),
-    path('api/v1/user/', include('crawler_studio.app_user.urls')),
-    path('api/v1/api-token-auth/', views.obtain_auth_token),
+    path('api/<version>/logs/', include('crawler_studio.app_logs.urls')),
+    path('api/<version>/schedule/', include('crawler_studio.app_schedule.urls')),
+    path('api/<version>/scrapyd/', include('crawler_studio.app_scrapyd.urls')),
+    path('api/<version>/settings/', include('crawler_studio.app_settings.urls')),
+    path('api/<version>/user/', include('crawler_studio.app_user.urls')),
+    path('api/<version>/api-token-auth/', views.obtain_auth_token),
     path(r'', TemplateView.as_view(template_name="index.html")),
-    url(r'^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static'),
+    url(r'^static/(<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static'),
 ]

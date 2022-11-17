@@ -13,7 +13,7 @@ class ScrapydServerAddr(APIView):
     http://localhost:8000/api/v1/settings/scrapydserver/
     """
 
-    def get(self, request):
+    def get(self, request, **kwargs):
         data = ScrapydServer.objects.all()
         ser = ScrapydServerSer(data, many=True)
         res = {
@@ -25,7 +25,7 @@ class ScrapydServerAddr(APIView):
         }
         return Response(res)
 
-    def post(self, request):
+    def post(self, request, **kwargs):
         addr = request.data['addr']
 
         existed = ScrapydServer.objects.filter(addr=addr).first()
@@ -55,7 +55,7 @@ class ScrapydServerAddr(APIView):
             }
             return Response(res)
 
-    def delete(self, request):
+    def delete(self, request, **kwargs):
         data = eval(request.body.decode())
         result = ScrapydServer.objects.filter(addr=data['addr']).delete()
         if result[0] == 1:
@@ -73,7 +73,7 @@ class ScrapydServerAddr(APIView):
             }
             return Response(res)
 
-    def put(self, request):
+    def put(self, request, **kwargs):
         data = eval(request.body.decode())
         ScrapydServer.objects.filter(is_default=1).update(is_default=0)
         ScrapydServer.objects.filter(addr=data['addr']).update(is_default=1)
@@ -87,7 +87,7 @@ class ScrapydServerAddr(APIView):
 
 class MailSenderCRUD(APIView):
 
-    def get(self, request):
+    def get(self, request, **kwargs):
         data = MailSender.objects.first()
         ser = MailSenderSer(data)
         res = {
@@ -99,7 +99,7 @@ class MailSenderCRUD(APIView):
         }
         return Response(res)
 
-    def post(self, request):
+    def post(self, request, **kwargs):
         print(request.data)
         existed = MailSender.objects.first()
         sender = MailSenderSer(instance=existed, data=request.data)

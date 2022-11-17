@@ -77,7 +77,7 @@ class MonitorRulesCRUD(APIView):
         super(MonitorRulesCRUD, self).__init__()
         self.logger = logging.getLogger('MonitorRulesCRUD')
 
-    def get(self, request):
+    def get(self, request, **kwargs):
         ser = MonitorRulesSerializer(instance=MonitorRules.objects.all(), many=True)
         res = {
             'code': 200,
