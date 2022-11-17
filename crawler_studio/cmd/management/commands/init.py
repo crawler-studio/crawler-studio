@@ -14,10 +14,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.create_default_monitor_params()
+        print('init finished')
 
     @staticmethod
     def create_default_monitor_params():
-        SpiderStartParams.objects.create(
+        SpiderStartParams.objects.get_or_create(
             project='__default',
             spider='__default',
             monitor_freq=300,
