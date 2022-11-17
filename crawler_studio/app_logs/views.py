@@ -3,7 +3,6 @@ import time
 import logging
 import datetime
 from rest_framework.views import APIView
-from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
 from .models import HourlyErrLogRate, DailyErrLogRate, ErrorLog
 from .ser import HourlyErrLogRateSer, DailyErrLogRateSer, ErrorLogSer
@@ -96,8 +95,7 @@ class ErrorLogContentCRUD(APIView):
         page_size = page_obj.get_page_size(request)
         paginator = page_obj.django_paginator_class(queryset, page_size)
         page_number = page_obj.get_page_number(request, paginator)
-
-        return Response({
+        res = {
             'code': 200,
             'data': {
                 'data': ser.data,
@@ -106,7 +104,8 @@ class ErrorLogContentCRUD(APIView):
                 'pageSize': page_size
             },
             'message': 'ok'
-        })
+        }
+        return Response(res)
 
     def post(self, request, **kwargs):
         data = ErrorLogSer(data=request.data, many=True)
@@ -118,18 +117,19 @@ class ErrorLogContentCRUD(APIView):
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def error_log_group_from_sql(request):
-    if request.method == 'POST':
-        request_data = eval(request.body.decode())
+class ErrorLogGroupFromSql(APIView):
+
+    def post(self, request, **kwargs):
+        request_data = request.data
         date = request_data['date']
         if date == 'today':
-            date_range = 'log_date = CURDATE()'
+            date_range = 'log_date = DATE()'
         elif date == 'yestoday':
-            date_range = 'log_date = CURDATE()-1'
+            date_range = 'log_date = DATE()-1'
         elif date == 'before_yestoday':
-            date_range = 'log_date = CURDATE()-2'
+            date_range = 'log_date = DATE()-2'
         else:
-            date_range = 'YEARWEEK(log_date) = YEARWEEK(now())'
+            date_range = "DATE(log_date) >= DATE('now', 'weekday 0', '-7 days')"
 
         server = request_data["server"] or [""]
         sql = """
@@ -147,6 +147,7 @@ def error_log_group_from_sql(request):
             host,
             log_hour;
         """.format(date_range, ','.join(repr(_) for _ in server))
+        print(sql)
         result = HourlyErrLogRate.objects.raw(sql)
         hosts = set(_.host for _ in result)
         today = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -168,7 +169,7 @@ def error_log_group_from_sql(request):
                 if not hour_exist:
                     series[host].append(0)
 
-        return JsonResponse({
+        res = {
             'code': 200,
             'data': {
                 'data': {
@@ -177,21 +178,23 @@ def error_log_group_from_sql(request):
                 }
             },
             'message': 'ok'
-        })
+        }
+        return Response(res)
 
 
-def host_error_log_group_from_sql(request):
-    if request.method == 'POST':
-        request_data = eval(request.body.decode())
+class HostErrorLogGroupFromSql(APIView):
+
+    def post(self, request, **kwargs):
+        request_data = request.data
         date = request_data['date']
         if date == 'today':
-            date_range = 'log_date = CURDATE()'
+            date_range = 'log_date = DATE()'
         elif date == 'yestoday':
-            date_range = 'log_date = CURDATE()-1'
+            date_range = 'log_date = DATE()-1'
         elif date == 'before_yestoday':
-            date_range = 'log_date = CURDATE()-2'
+            date_range = 'log_date = DATE()-2'
         else:
-            date_range = 'YEARWEEK(log_date) = YEARWEEK(now())'
+            date_range = "DATE(log_date) >= DATE('now', 'weekday 0', '-7 days')"
 
         server = request_data["server"] or [""]
         sql = """
@@ -216,7 +219,7 @@ def host_error_log_group_from_sql(request):
         result = DailyErrLogRate.objects.raw(sql)
         spiders = list(_.spider for _ in result)[:5]
         error_log_count = list(int(_.err_count) for _ in result)[:5]
-        return JsonResponse({
+        res = {
             'code': 200,
             'data': {
                 'data': {
@@ -225,4 +228,5 @@ def host_error_log_group_from_sql(request):
                 }
             },
             'message': 'ok'
-        })
+        }
+        return Response(res)
