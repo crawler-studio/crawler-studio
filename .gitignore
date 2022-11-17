@@ -7,6 +7,6 @@ db.sqlite3
 logs/
 setup.py
 setup_internal.py
-build/
+/build
 dist/
 crawler_studio.egg-info/
