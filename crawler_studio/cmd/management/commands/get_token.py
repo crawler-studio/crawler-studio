@@ -18,8 +18,11 @@ class Command(BaseCommand):
             "username": options['username'],
             "password": options['password']
         }
-        resp = self.client.post('/api/v1/api-token-auth/', body, format='json')
-        print(resp.json()['token'])
+        try:
+            resp = self.client.post('/api/v1/api-token-auth/', body, format='json')
+            print(resp.json()['token'])
+        except Exception as e:
+            print(e)
 
     def add_arguments(self, parser):
         parser.add_argument('-u', '--username', action='store', dest='username', default='')
