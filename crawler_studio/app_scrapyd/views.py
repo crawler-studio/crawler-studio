@@ -57,6 +57,10 @@ class NewTaskCRUD(APIView):
         启动爬虫，并且传递设置参数
         """
         data = request.data
+        start_kwargs = dict()
+        for p in data['params'].strip(';').split(';'):
+            key, value = p.split('=')
+            start_kwargs[key.strip()] = value.strip()
         setting = dict()
         setting['CS_ENABLE_MONITOR_RULE'] = data['enable_monitor_rule']
         setting['CS_ENABLE_SEND_ERR_TEXT'] = data['enable_send_error_log']
@@ -65,7 +69,7 @@ class NewTaskCRUD(APIView):
         setting['CS_MEMORY_USE_LIMIT'] = int(data['memory_use_limit'])
         logger.info(f'Start spider, spider settings {setting}')
         ins = ScrapydAPI(target=data['host'])
-        job_id = ins.schedule(data['project'], data['spider'], settings=setting)
+        job_id = ins.schedule(data['project'], data['spider'], settings=setting, **start_kwargs)
         res = {
             'code': 200,
             'data': None,
