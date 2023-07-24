@@ -95,7 +95,3 @@ def send_mail(receiver: str, subject: str = "", content: str = "",
     if attach:
         logger.info('附件名称: %s' % os.path.basename(attach))
 
-
-if __name__ == '__main__':
-    # send_ding_message('虎博爬虫预警', '测试')
-    send_mail(receiver='862187570@qq.com', subject='爬虫测试', content='测试内容哦～')
