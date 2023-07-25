@@ -103,6 +103,7 @@ class RunningTaskCRUD(APIView):
                 item['spider'] = running['spider']
                 item['pid'] = running['pid']
                 item['start_time'] = running['start_time'].split('.')[0]
+                item['start_params'] = 'Unknown' if monitor_rule is None else monitor_rule.start_params
                 # item['schedule_type'] = 'Unknown' if stats is None else stats.run_type
                 # item['trigger'] = 'Unknown' if stats is None else stats.trigger
                 # item['last_run'] = 'Unknown' if stats is None else stats.last_run
