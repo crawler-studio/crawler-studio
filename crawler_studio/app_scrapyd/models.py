@@ -41,5 +41,6 @@ class SpiderStartParams(models.Model):
     enable_monitor_rule = models.BooleanField(verbose_name='是否开启爬虫监控')
     monitor_recipients = models.CharField(max_length=255)
     params = models.TextField(verbose_name='其他启动参数', null=True)
+    description = models.CharField(max_length=2000, verbose_name='说明', null=True)
     create_time = models.DateTimeField(auto_now=True)
     update_time = models.DateTimeField(auto_now_add=True)

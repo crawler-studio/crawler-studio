@@ -21,6 +21,7 @@ class MonitorRules(models.Model):
     spider_name = models.CharField(null=True, max_length=100, verbose_name='爬虫名称')
     spider_job_id = models.CharField(null=True, max_length=100, db_index=True)
     start_params = models.CharField(null=True, max_length=1000, verbose_name='启动参数')
+    description = models.CharField(max_length=2000, verbose_name='说明', null=True)
     # monitor_type = models.CharField(max_length=50, null=True, verbose_name='预警方式，1:日志存活时间，2:日志错误率, 3:日志错误数量')
     monitor_freq = models.IntegerField(verbose_name='监控频率，秒为单位', default=1800)
     log_alive_limit = models.IntegerField(default=80, verbose_name='日志存活时间上限, 默认80sec')

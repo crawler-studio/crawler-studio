@@ -14,7 +14,7 @@ class ScrapydServerAddr(APIView):
     """
 
     def get(self, request, **kwargs):
-        data = ScrapydServer.objects.all()
+        data = ScrapydServer.objects.all().order_by('alias')
         ser = ScrapydServerSer(data, many=True)
         res = {
             'code': 200,

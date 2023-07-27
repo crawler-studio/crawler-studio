@@ -58,15 +58,17 @@ class NewTaskCRUD(APIView):
         """
         data = request.data
         start_kwargs = dict()
-        for p in data['params'].strip(';').split(';'):
-            key, value = p.split('=')
-            start_kwargs[key.strip()] = value.strip()
+        if data['params'] and '=' in data['params']:
+            for p in data['params'].strip(';').split(';'):
+                key, value = p.split('=')
+                start_kwargs[key.strip()] = value.strip()
         setting = dict()
         setting['CS_ENABLE_MONITOR_RULE'] = data['enable_monitor_rule']
         setting['CS_ENABLE_SEND_ERR_TEXT'] = data['enable_send_error_log']
         setting['CS_MONITOR_FREQ'] = int(data['monitor_freq'])
         setting['CS_ERRLOG_RATE_LIMIT'] = float(data['errlog_rate_limit'])
         setting['CS_MEMORY_USE_LIMIT'] = int(data['memory_use_limit'])
+        setting['CS_DESCRIPTION'] = data['description']
         logger.info(f'Start spider, spider settings {setting}')
         ins = ScrapydAPI(target=data['host'])
         job_id = ins.schedule(data['project'], data['spider'], settings=setting, **start_kwargs)
@@ -103,7 +105,7 @@ class RunningTaskCRUD(APIView):
                 item['spider'] = running['spider']
                 item['pid'] = running['pid']
                 item['start_time'] = running['start_time'].split('.')[0]
-                item['start_params'] = 'Unknown' if monitor_rule is None else monitor_rule.start_params
+                item['description'] = 'Unknown' if monitor_rule is None else monitor_rule.start_params
                 # item['schedule_type'] = 'Unknown' if stats is None else stats.run_type
                 # item['trigger'] = 'Unknown' if stats is None else stats.trigger
                 # item['last_run'] = 'Unknown' if stats is None else stats.last_run
